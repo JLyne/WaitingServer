@@ -1,38 +1,59 @@
 import logging
 import os
 
-from chunk import Chunk
+from world import World
 
 import yaml
 
 logger = logging.getLogger('config')
+worlds = dict()
+default_world = None
 
-def load_chunk_config():
-    chunks = list()
+def load_world_config():
+    global default_world
+    global worlds
 
     with open(r'config.yml') as file:
-        entries = yaml.load(file)
+        config = yaml.load(file)
+        default = config.get('default-world', None)
+        default_exists = False
 
-        for entry in entries:
-            name = entry.get('name', 'Untitled')
-            contributors = entry.get('contributors', list())
-            environment = entry.get('environment', dict())
-            folder = entry.get('folder')
-            viewpoints = entry.get('viewpoints', list())
+        for w in config.get('worlds', list()):
+            name = w.get('name', 'Untitled')
+            environment = w.get('environment', dict())
+            portals = w.get('portals', list())
+            folder = w.get('folder')
+            spawn = w.get('spawn', None)
 
             if folder is None:
-                logger.error('Entry %s has no folder defined. Skipped.', name)
+                logger.error('World %s has no folder defined. Skipped.', name)
                 continue
 
             folder_path = os.path.join(os.getcwd(), 'packets', folder)
 
             if os.path.exists(folder_path) is False:
-                logger.error('Folder for entry %s does not exist. Skipped.', name)
+                logger.error('Folder for world %s does not exist. Skipped.', name)
                 continue
 
-            chunk = Chunk(name, contributors, environment, folder, viewpoints)
-            logger.info('Loaded {}', chunk.credit_string)
+            world = World(name, environment, folder, spawn, portals)
+            logger.info('Loaded {}', world.name)
 
-            chunks.append(chunk)
+            if default == world.name:
+                default_exists = True
 
-        return chunks
+            worlds[world.name] = world
+
+        if len(worlds) == 0:
+            logging.getLogger('main').error("No worlds defined.")
+            exit(1)
+
+        if default_exists:
+            default_world = worlds[default]
+        else:
+            default_world = next(iter(worlds.values()))
+
+def get_worlds():
+    return worlds
+
+def get_default_world():
+    return default_world
