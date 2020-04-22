@@ -1,10 +1,7 @@
 """
 Empty server that send the _bare_ minimum data to keep a minecraft client connected
 """
-import logging
-import random
 import time
-import math
 from argparse import ArgumentParser
 from copy import deepcopy
 
@@ -30,8 +27,9 @@ class StoneWallProtocol(ServerProtocol):
 
         self.player_spawned = False
 
-        self.last_click = time.time()
-        self.last_portal = time.time()
+        self.last_portal = 0
+        self.last_command = 0
+        self.last_teleport = 0
 
         self.forwarded_uuid = None
         self.forwarded_host = None
@@ -81,16 +79,13 @@ class StoneWallProtocol(ServerProtocol):
         self.ticker.add_loop(100, self.send_keep_alive)  # Keep alive packets
 
         self.current_world = config.get_default_world()
+        self.send_commands()
         self.send_world()
 
     def player_left(self):
         super().player_left()
 
         set_players_online(len(self.factory.players))
-
-    # Cycle through viewpoints when player clicks
-    def packet_animation(self, buff):
-        buff.unpack_varint()
 
     def packet_player_position(self, buff):
         x = buff.unpack('d')
@@ -99,6 +94,7 @@ class StoneWallProtocol(ServerProtocol):
         on_ground = buff.unpack('b')
 
         self.check_portals(x, y, z)
+        self.check_bounds(x, y, z)
 
     def packet_player_position_and_look(self, buff):
         x = buff.unpack('d')
@@ -109,16 +105,27 @@ class StoneWallProtocol(ServerProtocol):
         on_ground = buff.unpack('b')
 
         self.check_portals(x, y, z)
+        self.check_bounds(x, y, z)
 
-    # Handle /next and /orev commands in voting mode
+    # Handle /spawn and /reset commands
     def packet_chat_message(self, buff):
         message = buff.unpack_string()
+        now = time.time()
 
-        if message == "/spawn":
+        if message == "/spawn" or message == "/hub":
+            if now - self.last_command < 0.5:
+                return
+
             self.send_spawn()
+        elif message == "/reset":
+            if now - self.last_command < 2:
+                return
 
-        if message == "/reset":
             self.reset_world()
+        else:
+            return
+
+        self.last_command = time.time()
 
     def send_world(self):
         self.send_spawn()
@@ -143,12 +150,18 @@ class StoneWallProtocol(ServerProtocol):
                                              self.current_world.time  if self.current_world.cycle is True
                                              else (0 - self.current_world.time)))
 
-    def send_spawn(self):
+    def send_spawn(self, effects = False):
         spawn = self.current_world.spawn
 
         self.send_packet("player_position_and_look",
                         self.buff_type.pack("dddff?", spawn.get('x'), spawn.get('y'), spawn.get('z'), spawn.get('yaw'), spawn.get('pitch'), 0b00000),
                                 self.buff_type.pack_varint(0))
+
+        if effects is True:
+            self.send_packet("effect",
+                             self.buff_type.pack("i", 2003),
+                             self.buff_type.pack_position(int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z'))),
+                             self.buff_type.pack("ib", 0, False))
 
         self.player_spawned = True
 
@@ -156,31 +169,22 @@ class StoneWallProtocol(ServerProtocol):
         self.player_spawned = False
         self.raining = False
 
-        Connect
-        self.send_packet("respawn", self.buff_type.pack("iBq", 0, 3, 0), self.buff_type.pack_string("flat"))
-        self.send_world()
+        self.send_packet("respawn", self.buff_type.pack("iBq", 1, 0, 1), self.buff_type.pack_string("default"))
+        self.send_packet("respawn", self.buff_type.pack("iBq", 0, 0, 1), self.buff_type.pack_string("default"))
+
+        self.ticker.add_delay(1, self.send_world)
+        self.ticker.add_delay(2, self.send_reset_sound)
+
+    def send_reset_sound(self):
+        spawn = self.current_world.spawn
+
+        self.send_packet("named_sound_effect",
+                         self.buff_type.pack_string("minecraft:item.trident.thunder"),
+                         self.buff_type.pack_varint(6),
+                         self.buff_type.pack("iiiff", int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z')), 100000.0, 1))
 
     def send_keep_alive(self):
         self.send_packet("keep_alive", self.buff_type.pack("Q", 0))
-
-    def check_portals(self, x, y, z):
-        x = math.floor(x)
-        y = math.floor(y)
-        z = math.floor(z)
-
-        for portal in self.current_world.portals:
-            pos1x = min(portal['pos1'][0], portal['pos2'][0])
-            pos1y = min(portal['pos1'][1], portal['pos2'][1])
-            pos1z = min(portal['pos1'][2], portal['pos2'][2])
-
-            pos2x = max(portal['pos1'][0], portal['pos2'][0])
-            pos2y = max(portal['pos1'][1], portal['pos2'][1])
-            pos2z = max(portal['pos1'][2], portal['pos2'][2])
-
-            if pos1x <= x <= pos2x and pos1y <= y <= pos2y and pos1z <= z <= pos2z :
-                self.send_portal(portal['server'])
-
-                return
 
     def send_portal(self, server):
         now = time.time()
@@ -189,12 +193,68 @@ class StoneWallProtocol(ServerProtocol):
             self.last_portal = now
             self.logger.info("Sending %s to %s.", self.display_name, server)
 
-            connect = bytes("Connect", 'utf-8')
-            server = bytes(server, 'utf-8')
+            connect = "Connect".encode('utf-8')
+            server = server.encode('utf-8')
+            message_format = 'H' + str(len(connect)) + 'sH' + str(len(server)) + 's'
 
             self.send_packet("plugin_message",
                              self.buff_type.pack_string('bungeecord:main'),
-                             self.buff_type.pack('HsHs', len(connect), connect, len(server), server))
+                             self.buff_type.pack(message_format, len(connect), connect, len(server), server))
+
+    def send_commands(self):
+        commands = {
+            "name": None,
+            "suggestions": None,
+            "type": "root",
+            "executable": True,
+            "redirect": None,
+            "children": {
+                "reset": {
+                    "type": "literal",
+                    "name": "reset",
+                    "executable": True,
+                    "redirect": None,
+                    "children": dict(),
+                    "suggestions": None
+                },
+                "spawn": {
+                    "type": "literal",
+                    "name": "spawn",
+                    "executable": True,
+                    "redirect": None,
+                    "children": dict(),
+                    "suggestions": None
+                },
+                "hub": {
+                    "type": "literal",
+                    "name": "hub",
+                    "executable": True,
+                    "redirect": None,
+                    "children": dict(),
+                    "suggestions": None
+                },
+                "unlink": {
+                    "type": "literal",
+                    "name": "unlink",
+                    "executable": True,
+                    "redirect": None,
+                    "children": dict(),
+                    "suggestions": None
+                },
+            },
+        }
+
+        self.send_packet('declare_commands', self.buff_type.pack_commands(commands))
+
+    def check_bounds(self, x, y, z):
+        if not self.current_world.is_within_bounds(x, y, z):
+            self.send_spawn(True)
+
+    def check_portals(self, x, y, z):
+        server = self.current_world.get_portal_at(x, y, z)
+
+        if server is not None:
+            self.send_portal(server)
 
 if __name__ == "__main__":
     parser = ArgumentParser()

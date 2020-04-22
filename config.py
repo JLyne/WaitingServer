@@ -23,6 +23,7 @@ def load_world_config():
             environment = w.get('environment', dict())
             portals = w.get('portals', list())
             folder = w.get('folder')
+            bounds = w.get('bounds', None)
             spawn = w.get('spawn', None)
 
             if folder is None:
@@ -35,7 +36,7 @@ def load_world_config():
                 logger.error('Folder for world %s does not exist. Skipped.', name)
                 continue
 
-            world = World(name, environment, folder, spawn, portals)
+            world = World(name, folder, environment, bounds, spawn, portals)
             logger.info('Loaded {}', world.name)
 
             if default == world.name:

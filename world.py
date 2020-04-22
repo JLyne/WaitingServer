@@ -9,7 +9,7 @@ from quarry.types.buffer import Buffer
 
 class World:
 
-    def __init__(self, name: str, environment: dict, folder: str, spawn: str, portals: list):
+    def __init__(self, name: str, folder: str, environment: dict, bounds: dict, spawn: str, portals: list):
         self.name = name
         self.time = environment.get('time', 0)
         self.dimension = environment.get('dimension', 'Overworld')
@@ -18,6 +18,7 @@ class World:
 
         self.packets = list()
         self.portals = list()
+        self.bounds = None
         self.spawn = { "x": 0, "y": 0, "z": 0, "yaw": 0, "yaw_256": 0, "pitch": 0}
 
         path = os.path.join(os.getcwd(), 'packets', folder, '*.bin')
@@ -62,3 +63,55 @@ class World:
                 "pos2": pos2,
                 "server": portal.get('server', None)
             })
+
+        if bounds is not None:
+            pos1 = [0, 0, 0]
+            pos2 = [0, 0, 0]
+
+            for i, part in enumerate(bounds.get('pos1', '').split(',')):
+                pos1[i] = math.floor(float(part))
+
+            for i, part in enumerate(bounds.get('pos2', '').split(',')):
+                pos2[i] = math.floor(float(part))
+
+            self.bounds = {
+                "pos1": pos1,
+                "pos2": pos2,
+            }
+
+    def get_portal_at(self, x, y, z):
+        x = math.floor(x)
+        y = math.floor(y)
+        z = math.floor(z)
+
+        for portal in self.portals:
+            pos1x = min(portal['pos1'][0], portal['pos2'][0])
+            pos1y = min(portal['pos1'][1], portal['pos2'][1])
+            pos1z = min(portal['pos1'][2], portal['pos2'][2])
+
+            pos2x = max(portal['pos1'][0], portal['pos2'][0])
+            pos2y = max(portal['pos1'][1], portal['pos2'][1])
+            pos2z = max(portal['pos1'][2], portal['pos2'][2])
+
+            if pos1x <= x <= pos2x and pos1y <= y <= pos2y and pos1z <= z <= pos2z :
+                return portal['server']
+
+        return None
+
+    def is_within_bounds(self, x, y, z):
+        x = math.floor(x)
+        y = math.floor(y)
+        z = math.floor(z)
+
+        if self.bounds is None:
+            return True
+
+        pos1x = min(self.bounds['pos1'][0], self.bounds['pos2'][0])
+        pos1y = min(self.bounds['pos1'][1], self.bounds['pos2'][1])
+        pos1z = min(self.bounds['pos1'][2], self.bounds['pos2'][2])
+
+        pos2x = max(self.bounds['pos1'][0], self.bounds['pos2'][0])
+        pos2y = max(self.bounds['pos1'][1], self.bounds['pos2'][1])
+        pos2z = max(self.bounds['pos1'][2], self.bounds['pos2'][2])
+
+        return pos1x <= x <= pos2x and pos1y <= y <= pos2y and pos1z <= z <= pos2z

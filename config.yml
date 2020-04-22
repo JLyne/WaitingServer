@@ -5,6 +5,9 @@ worlds:
   spawn: -21,33,8,-90,0
   environment:
     time: 18000
+  bounds:
+    pos1: 62,255,78
+    pos2: -78,0,-62
   portals:
     - pos1: -8,36,3
       pos2: -8,33,5
