@@ -5,6 +5,8 @@ import time
 from argparse import ArgumentParser
 from copy import deepcopy
 
+import json
+
 import config
 
 from twisted.internet import reactor
@@ -73,15 +75,18 @@ class StoneWallProtocol(ServerProtocol):
         self.send_packet("join_game",
                          self.buff_type.pack("iBqiB", 0, 1, 0, 0, 0),
                          self.buff_type.pack_string("default"),
-                         self.buff_type.pack_varint(3),
+                         self.buff_type.pack_varint(32),
                          self.buff_type.pack("??", False, True))
 
         self.ticker.add_loop(100, self.send_keep_alive)  # Keep alive packets
+        self.ticker.add_loop(200, self.send_stop_music)
 
         self.current_world = config.get_default_world()
         self.send_commands()
         self.send_world()
 
+        self.ticker.add_delay(10, self.send_tablist)
+        self.ticker.add_delay(20, self.send_end_music)
     def player_left(self):
         super().player_left()
 
@@ -174,6 +179,21 @@ class StoneWallProtocol(ServerProtocol):
 
         self.ticker.add_delay(1, self.send_world)
         self.ticker.add_delay(2, self.send_reset_sound)
+        self.ticker.add_delay(20, self.send_end_music)
+
+    def send_tablist(self):
+        self.send_packet("player_list_header_footer",
+                         self.buff_type.pack_string(json.dumps({
+                            "text": 'Gamers Online: ',
+                            "extra": [
+                                {
+                                    "text": "123",
+                                    "obfuscated": True,
+                                    "color": "green"
+                                },
+                            ]
+                        })),
+                         self.buff_type.pack_string(json.dumps({"translate": ""})))
 
     def send_reset_sound(self):
         spawn = self.current_world.spawn
@@ -200,6 +220,19 @@ class StoneWallProtocol(ServerProtocol):
             self.send_packet("plugin_message",
                              self.buff_type.pack_string('bungeecord:main'),
                              self.buff_type.pack(message_format, len(connect), connect, len(server), server))
+
+    def send_end_music(self):
+        spawn = self.current_world.spawn
+
+        self.send_stop_music();
+        self.send_packet("named_sound_effect",
+                         self.buff_type.pack_string("minecraft:music.end"),
+                         self.buff_type.pack_varint(2),
+                         self.buff_type.pack("iiiff", int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z')), 100000.0, 1))
+
+    def send_stop_music(self):
+        self.send_packet("stop_sound", self.buff_type.pack("B", 2), self.buff_type.pack_string("minecraft:music.game"))
+        self.send_packet("stop_sound", self.buff_type.pack("B", 2), self.buff_type.pack_string("minecraft:music.creative"))
 
     def send_commands(self):
         commands = {
