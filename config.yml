@@ -1,7 +1,7 @@
-default-world: waiting
+default-world: Waiting
 tablist-text: |-
   \u00a7aWelcome to the RTGame Minecraft Hub!
-  \u00a79Walk thorough a portal to join a server
+  \u00a79Walk through a portal to join a server
   \u00a79
 worlds:
 - name: Waiting

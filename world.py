@@ -9,7 +9,7 @@ from quarry.types.buffer import Buffer
 
 class World:
 
-    def __init__(self, name: str, folder: str, environment: dict, bounds: dict, spawn: str, portals: list):
+    def __init__(self, name: str, folder: str, version: str, environment: dict, bounds: dict, spawn: str, portals: list):
         self.name = name
         self.time = environment.get('time', 0)
         self.dimension = environment.get('dimension', 'Overworld')
@@ -21,7 +21,7 @@ class World:
         self.bounds = None
         self.spawn = { "x": 0, "y": 0, "z": 0, "yaw": 0, "yaw_256": 0, "pitch": 0}
 
-        path = os.path.join(os.getcwd(), 'packets', folder, '*.bin')
+        path = os.path.join(os.getcwd(), 'packets', folder, version, '*.bin')
 
         for filename in sorted(glob.glob(path)):
             file = open(filename, 'rb')

@@ -1,13 +1,22 @@
 import logging
 import os
 
+import glob
+
 from world import World
 
 import yaml
 
 logger = logging.getLogger('config')
-worlds = dict()
-default_world = None
+worlds = {
+    '1.15': {},
+    '1.16': {}
+}
+
+default_world = {
+    '1.15': None,
+    '1.16': None
+}
 
 def load_world_config():
     global default_world
@@ -16,7 +25,10 @@ def load_world_config():
     with open(r'config.yml') as file:
         config = yaml.load(file)
         default = config.get('default-world', None)
-        default_exists = False
+        default_exists = {
+            '1.15': False,
+            '1.16': False
+        }
 
         for w in config.get('worlds', list()):
             name = w.get('name', 'Untitled')
@@ -36,25 +48,30 @@ def load_world_config():
                 logger.error('Folder for world %s does not exist. Skipped.', name)
                 continue
 
-            world = World(name, folder, environment, bounds, spawn, portals)
-            logger.info('Loaded {}', world.name)
+            for subfolder in glob.glob(os.path.join(folder_path, '*/')):
+                version = os.path.basename(os.path.normpath(subfolder))
 
-            if default == world.name:
-                default_exists = True
+                if worlds.get(version) is not None:
+                    world = World(name, folder, version, environment, bounds, spawn, portals)
+                    logger.info('Loaded {} for version {}', world.name, version)
 
-            worlds[world.name] = world
+                    if default == world.name:
+                        default_exists[version] = True
 
-        if len(worlds) == 0:
-            logging.getLogger('main').error("No worlds defined.")
-            exit(1)
+                    worlds[version][world.name] = world
 
-        if default_exists:
-            default_world = worlds[default]
-        else:
-            default_world = next(iter(worlds.values()))
+        for version in worlds:
+            if len(worlds[version]) == 0:
+                logger.error('No worlds defined for {}'.format(str(version)))
+                exit(1)
+
+            if default_exists[version]:
+                default_world[version] = worlds[version][default]
+            else:
+                default_world[version] = next(iter(worlds[version].values()))
 
 def get_worlds():
     return worlds
 
-def get_default_world():
-    return default_world
+def get_default_world(version):
+    return default_world.get(version, None)
