@@ -37,7 +37,7 @@ class Version(object, metaclass=abc.ABCMeta):
         self.send_world()
 
         self.protocol.ticker.add_delay(10, self.send_tablist)
-        self.protocol.ticker.add_delay(20, self.send_end_music)
+        self.protocol.ticker.add_delay(20, self.send_music)
 
     def packet_player_position(self, buff):
         x = buff.unpack('d')
@@ -137,7 +137,7 @@ class Version(object, metaclass=abc.ABCMeta):
 
         self.protocol.ticker.add_delay(1, self.send_world)
         self.protocol.ticker.add_delay(2, self.send_reset_sound)
-        self.protocol.ticker.add_delay(20, self.send_end_music)
+        self.protocol.ticker.add_delay(20, self.send_music)
 
     def send_tablist(self):
         self.protocol.send_packet("player_list_header_footer",
@@ -171,7 +171,7 @@ class Version(object, metaclass=abc.ABCMeta):
                              self.protocol.buff_type.pack_string('bungeecord:main'),
                              self.protocol.buff_type.pack(message_format, len(connect), connect, len(server), server))
 
-    def send_end_music(self):
+    def send_music(self):
         spawn = self.current_world.spawn
 
         self.send_stop_music()

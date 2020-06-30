@@ -27,15 +27,16 @@ class Version_1_16(Version):
                         'piglin_safe': TagByte(0),
                         'logical_height': TagInt(255),
                         'infiniburn': TagString("minecraft:infiniburn_end"),
-                    })
+                    }),
                 ])
             })
         })
 
         self.protocol.send_packet("join_game",
                          self.protocol.buff_type.pack("iBB", 0, 1, 1),
-                         self.protocol.buff_type.pack_varint(1),
+                         self.protocol.buff_type.pack_varint(2),
                          self.protocol.buff_type.pack_string("rtgame:waiting"),
+                         self.protocol.buff_type.pack_string("rtgame:reset"),
                          self.protocol.buff_type.pack_nbt(codec),
                          self.protocol.buff_type.pack_string("minecraft:overworld"),
                          self.protocol.buff_type.pack_string("rtgame:waiting"),
@@ -45,8 +46,23 @@ class Version_1_16(Version):
 
     def send_respawn(self):
         self.protocol.send_packet("respawn",
+                                  self.protocol.buff_type.pack_string("minecraft:the_end"),
+                                  self.protocol.buff_type.pack_string("rtgame:reset"),
+                                  self.protocol.buff_type.pack("qBB", 0, 1, 1),
+                                  self.protocol.buff_type.pack("???", False, False, True))
+
+        self.protocol.send_packet("respawn",
                                   self.protocol.buff_type.pack_string("minecraft:overworld"),
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("qBB", 0, 1, 1),
                                   self.protocol.buff_type.pack("???", False, False, True))
+
+    def send_music(self):
+        spawn = self.current_world.spawn
+
+        self.send_stop_music()
+        self.protocol.send_packet("named_sound_effect",
+                         self.protocol.buff_type.pack_string("minecraft:music_disc.strad"),
+                         self.protocol.buff_type.pack_varint(2),
+                         self.protocol.buff_type.pack("iiiff", int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z')), 100000.0, 0.1))
 
