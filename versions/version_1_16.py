@@ -46,7 +46,7 @@ class Version_1_16(Version):
 
     def send_respawn(self):
         self.protocol.send_packet("respawn",
-                                  self.protocol.buff_type.pack_string("minecraft:the_end"),
+                                  self.protocol.buff_type.pack_string("minecraft:overworld"),
                                   self.protocol.buff_type.pack_string("rtgame:reset"),
                                   self.protocol.buff_type.pack("qBB", 0, 1, 1),
                                   self.protocol.buff_type.pack("???", False, False, True))
