@@ -25,7 +25,7 @@ class World:
 
         for filename in sorted(glob.glob(path)):
             file = open(filename, 'rb')
-            packet_type = re.match(r'(\d+)_dn_(\w+)\.bin', os.path.basename(filename))
+            packet_type = re.match(r'(\d+)_dn_([a-z_]+)(_[\w-]*)?.bin', os.path.basename(filename))
 
             self.packets.append({
                 "id": packet_type.group(1),

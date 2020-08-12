@@ -10,12 +10,14 @@ import yaml
 logger = logging.getLogger('config')
 worlds = {
     '1.15': {},
-    '1.16': {}
+    '1.16': {},
+    '1.16.2': {}
 }
 
 default_world = {
     '1.15': None,
-    '1.16': None
+    '1.16': None,
+    '1.16.2': None
 }
 
 def load_world_config():
@@ -27,7 +29,8 @@ def load_world_config():
         default = config.get('default-world', None)
         default_exists = {
             '1.15': False,
-            '1.16': False
+            '1.16': False,
+            '1.16.2': False
         }
 
         for w in config.get('worlds', list()):
