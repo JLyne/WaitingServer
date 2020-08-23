@@ -3,8 +3,8 @@ from versions import Version
 from waitingserver import Protocol
 
 class Version_1_15(Version):
-    def __init__(self, protocol: Protocol):
-        super(Version_1_15, self).__init__(protocol)
+    def __init__(self, protocol: Protocol, bedrock: False):
+        super(Version_1_15, self).__init__(protocol, bedrock)
         self.version_name = '1.15'
 
     def send_join_game(self):

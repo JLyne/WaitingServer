@@ -8,7 +8,7 @@ import config
 from waitingserver import Protocol
 
 class Version(object, metaclass=abc.ABCMeta):
-    def __init__(self, protocol: Protocol):
+    def __init__(self, protocol: Protocol, bedrock: False):
         self.protocol = protocol
         self.uuid = UUID.from_offline_player('NotKatuen')
         self.viewpoint_id = 999
@@ -24,6 +24,7 @@ class Version(object, metaclass=abc.ABCMeta):
         self.last_teleport = 0
 
         self.version_name = None
+        self.is_bedrock = bedrock
 
     def player_joined(self):
         self.send_join_game()
