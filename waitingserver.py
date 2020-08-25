@@ -36,8 +36,6 @@ class Protocol(ServerProtocol):
         # Bungeecord ip forwarding, ip/uuid is included in host string separated by \00s
         split_host = str.split(p_connect_host, "\00")
 
-        self.logger.info(split_host)
-
         if len(split_host) >= 3:
             #TODO: Should probably verify the encrypted data in some way. Not important until something on this server uses uuids
             if split_host[1] == 'Geyser-Floodgate':

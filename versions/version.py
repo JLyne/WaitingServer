@@ -108,7 +108,13 @@ class Version(object, metaclass=abc.ABCMeta):
             self.protocol.send_packet('change_game_state', self.protocol.buff_type.pack("Bf", 1, 0))
             self.raining = False
 
-        # Time of day
+        if self.is_bedrock: # Current versions of geyser seem to ignore the time sometimes. Send repeatedly for now.
+            self.protocol.ticker.add_loop(100, self.send_time)
+        else:
+            self.send_time()
+
+    def send_time(self):
+         # Time of day
         self.protocol.send_packet('time_update',
                          self.protocol.buff_type.pack("Qq", 0,
                                              # Cycle

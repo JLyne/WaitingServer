@@ -64,5 +64,5 @@ class Version_1_16(Version):
         self.protocol.send_packet("named_sound_effect",
                          self.protocol.buff_type.pack_string("minecraft:music_disc.strad"),
                          self.protocol.buff_type.pack_varint(2),
-                         self.protocol.buff_type.pack("iiiff", int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z')), 100000.0, 0.1))
+                         self.protocol.buff_type.pack("iiiff", int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z')), 100000.0, 0.5))
 
