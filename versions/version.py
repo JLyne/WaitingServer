@@ -2,6 +2,8 @@ import abc
 import time
 
 import json
+
+from quarry.types.nbt import TagRoot, TagCompound
 from quarry.types.uuid import UUID
 
 import config
@@ -11,7 +13,6 @@ class Version(object, metaclass=abc.ABCMeta):
     def __init__(self, protocol: Protocol, bedrock: False):
         self.protocol = protocol
         self.uuid = UUID.from_offline_player('NotKatuen')
-        self.viewpoint_id = 999
 
         self.current_world = None
         self.current_position = None
@@ -21,21 +22,22 @@ class Version(object, metaclass=abc.ABCMeta):
 
         self.last_portal = 0
         self.last_command = 0
-        self.last_teleport = 0
 
         self.version_name = None
         self.is_bedrock = bedrock
 
     def player_joined(self):
-        self.send_join_game()
-
         self.protocol.ticker.add_loop(100, self.send_keep_alive)  # Keep alive packets
         self.protocol.ticker.add_loop(200, self.send_stop_music)
 
         self.current_world = config.get_default_world(self.version_name)
 
+        self.send_join_game()
         self.send_commands()
         self.send_world()
+
+        if self.is_bedrock: # Prevent geyser persisting previous server inventory
+            self.send_inventory()
 
         self.protocol.ticker.add_delay(10, self.send_tablist)
         self.protocol.ticker.add_delay(20, self.send_music)
@@ -94,6 +96,24 @@ class Version(object, metaclass=abc.ABCMeta):
 
     def send_world(self):
         self.send_spawn()
+
+        # Clear geyser chunk cache from previous server
+        if self.is_bedrock:
+            data = [
+                self.protocol.buff_type.pack_varint(0),
+                self.protocol.buff_type.pack_nbt(TagRoot({'': TagCompound({})})),
+                self.protocol.buff_type.pack_varint(1024),
+            ]
+
+            for i in range(0, 1024):
+                data.append(self.protocol.buff_type.pack_varint(127))
+
+            data.append(self.protocol.buff_type.pack_varint(0))
+            data.append(self.protocol.buff_type.pack_varint(0))
+
+            for x in range(-8, 8):
+                for y in range(-8, 8):
+                    self.protocol.send_packet("chunk_data", self.protocol.buff_type.pack("ii?", x, y, True), *data)
 
         # Chunk packets
         for packet in self.current_world.packets:
@@ -245,6 +265,16 @@ class Version(object, metaclass=abc.ABCMeta):
         }
 
         self.protocol.send_packet('declare_commands', self.protocol.buff_type.pack_commands(commands))
+
+    def send_inventory(self):
+        data = [
+            self.protocol.buff_type.pack('Bh', 0, 46)
+        ]
+
+        for i in range(0, 46):
+            data.append(self.protocol.buff_type.pack('?', False))
+
+        self.protocol.send_packet('window_items', *data)
 
     @abc.abstractmethod
     def send_join_game(self):

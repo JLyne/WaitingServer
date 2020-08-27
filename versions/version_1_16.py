@@ -1,10 +1,10 @@
 from quarry.types.nbt import TagList, TagCompound, TagRoot, TagString, TagByte, TagFloat, TagLong, TagInt
 
-from versions import Version
+from versions import Version_1_15
 from waitingserver import Protocol
 
 
-class Version_1_16(Version):
+class Version_1_16(Version_1_15):
     def __init__(self, protocol: Protocol, bedrock: False):
         super(Version_1_16, self).__init__(protocol, bedrock)
         self.version_name = '1.16'
