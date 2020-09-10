@@ -17,12 +17,18 @@ worlds = list()
 
 class Protocol(ServerProtocol):
     def __init__(self, factory, remote_addr):
+        from versions import Version_1_15, Version_1_16, Version_1_16_2
         self.uuid = UUID.from_offline_player('NotKatuen')
 
         self.forwarded_uuid = None
         self.forwarded_host = None
         self.is_bedrock = False
         self.version = None
+        self.versions = {
+            578 : Version_1_15,
+            736 : Version_1_16,
+            751 : Version_1_16_2
+        }
 
         super(Protocol, self).__init__(factory, remote_addr)
 
@@ -50,18 +56,14 @@ class Protocol(ServerProtocol):
             self.forwarded_host = host
             self.forwarded_uuid = UUID.from_hex(online_uuid)
 
-        if p_protocol_version == 578:
-            from versions import Version_1_15
+        version = None
 
-            self.version = Version_1_15(self, self.is_bedrock)
-        elif p_protocol_version == 736:
-            from versions import Version_1_16
+        for pv, v in self.versions.items():
+            if p_protocol_version >= pv:
+                version = v
 
-            self.version = Version_1_16(self, self.is_bedrock)
-        elif p_protocol_version == 751:
-            from versions import Version_1_16_2
-
-            self.version = Version_1_16_2(self, self.is_bedrock)
+        if version is not None:
+            self.version = version(self, self.is_bedrock)
         else:
             self.close("Unsupported Minecraft Version")
 
