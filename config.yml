@@ -1,4 +1,4 @@
-default-world: Waiting
+default-world: Waiting Winter
 tablist-text: |-
   \u00a7aWelcome to the RTGame Minecraft Hub!
   \u00a79Walk through a portal to join a server
@@ -27,6 +27,25 @@ worlds:
   spawn: 0,32,0,180,0
   environment:
     time: 18000
+  bounds:
+    pos1: 111,255,111
+    pos2: -95,0,-95
+  portals:
+    - pos1: -5,30,-14
+      pos2: -3,31,-12
+      server: creative
+    - pos1: -1,30,-14
+      pos2: 1,31,-12
+      server: survival
+    - pos1: 3,30,-14
+      pos2: 5,31,-12
+      server: build
+- name: Waiting Winter
+  folder: waiting_winter
+  spawn: 0,32,0,180,0
+  environment:
+    time: 18000
+    weather: 'rain'
   bounds:
     pos1: 111,255,111
     pos2: -95,0,-95
