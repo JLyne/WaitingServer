@@ -62,7 +62,7 @@ class Version_1_16(Version_1_15):
 
         self.send_stop_music()
         self.protocol.send_packet("named_sound_effect",
-                         self.protocol.buff_type.pack_string("minecraft:music_disc.strad"),
+                         self.protocol.buff_type.pack_string("minecraft:music.under_water"),
                          self.protocol.buff_type.pack_varint(2),
                          self.protocol.buff_type.pack("iiiff", int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z')), 100000.0, 0.5))
 
