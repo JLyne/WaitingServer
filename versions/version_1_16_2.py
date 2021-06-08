@@ -8,21 +8,7 @@ class Version_1_16_2(Version_1_16):
         super(Version_1_16_2, self).__init__(protocol, bedrock)
         self.version_name = '1.16.2'
 
-        self.dimension_settings = {
-            'piglin_safe': TagByte(0),
-            'natural': TagByte(1),
-            'ambient_light': TagFloat(0.0),
-            'infiniburn': TagString("minecraft:infiniburn_overworld"),
-            'respawn_anchor_works': TagByte(0),
-            'has_skylight': TagByte(0),
-            'bed_works': TagByte(0),
-            "effects": TagString("minecraft:overworld") if self.is_bedrock else TagString("minecraft:the_nether"),
-            'has_raids': TagByte(0),
-            'logical_height': TagInt(256),
-            'coordinate_scale': TagFloat(1.0),
-            'ultrawarm': TagByte(0),
-            'has_ceiling': TagByte(0),
-        }
+        self.dimension_settings = self.get_dimension_settings()
 
         self.dimension = {
             'name': TagString("minecraft:overworld"),
@@ -35,6 +21,24 @@ class Version_1_16_2(Version_1_16):
         })
 
         self.biomes = NBTFile(TagRoot({})).load('biomes.nbt')
+
+    def get_dimension_settings(self):
+        return {
+            'piglin_safe': TagByte(0),
+            'natural': TagByte(1),
+            'ambient_light': TagFloat(1.0),
+            'infiniburn': TagString("minecraft:infiniburn_overworld"),
+            'respawn_anchor_works': TagByte(0),
+            'has_skylight': TagByte(1),
+            'bed_works': TagByte(0),
+            "effects": TagString("minecraft:overworld") if self.is_bedrock else TagString("minecraft:the_nether"),
+            'has_raids': TagByte(0),
+            'logical_height': TagInt(256),
+            'coordinate_scale': TagFloat(1.0),
+            'ultrawarm': TagByte(0),
+            'has_ceiling': TagByte(0),
+            'fixed_time': TagInt(18000),
+        }
 
     def send_join_game(self):
         codec = TagRoot({
