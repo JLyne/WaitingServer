@@ -3,6 +3,8 @@ import os
 
 import glob
 
+from yaml import SafeLoader
+
 from world import World
 
 import yaml
@@ -28,7 +30,7 @@ def load_world_config():
     global worlds
 
     with open(r'config.yml') as file:
-        config = yaml.load(file)
+        config = yaml.load(file, Loader=SafeLoader)
         default = config.get('default-world', None)
         default_exists = {
             '1.15': False,
