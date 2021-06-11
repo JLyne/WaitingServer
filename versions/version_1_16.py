@@ -8,6 +8,7 @@ class Version_1_16(Version_1_15):
     def __init__(self, protocol: Protocol, bedrock: False):
         super(Version_1_16, self).__init__(protocol, bedrock)
         self.version_name = '1.16'
+        self.music = 'minecraft:music.under_water'
 
     def send_join_game(self):
         codec = TagRoot({
@@ -56,16 +57,3 @@ class Version_1_16(Version_1_15):
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("qBB", 0, 1, 1),
                                   self.protocol.buff_type.pack("???", False, False, True))
-
-    def send_music(self):
-        spawn = self.current_world.spawn
-
-        self.send_stop_music()
-        self.protocol.send_packet("named_sound_effect",
-                                  self.protocol.buff_type.pack_string("minecraft:music.under_water"),
-                                  self.protocol.buff_type.pack_varint(2),
-                                  self.protocol.buff_type.pack("iiiff",
-                                                               int(spawn.get('x')),
-                                                               int(spawn.get('y')),
-                                                               int(spawn.get('z')), 100000.0, 0.5))
-

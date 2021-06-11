@@ -1,10 +1,6 @@
 import abc
 import time
 
-import json
-
-from quarry.types.nbt import TagRoot, TagCompound
-
 import config
 from waitingserver import Protocol
 
@@ -27,7 +23,7 @@ class Version(object, metaclass=abc.ABCMeta):
 
     def player_joined(self):
         self.protocol.ticker.add_loop(100, self.send_keep_alive)  # Keep alive packets
-        self.protocol.ticker.add_loop(200, self.send_stop_music)
+        self.protocol.ticker.add_loop(200, lambda: self.send_music(True))
 
         self.current_world = config.get_default_world(self.version_name)
 
@@ -85,77 +81,41 @@ class Version(object, metaclass=abc.ABCMeta):
 
     def check_bounds(self, x, y, z):
         if not self.current_world.is_within_bounds(x, y, z):
-            self.send_spawn(True)
+            self.spawn_player(True)
 
     def check_portals(self, x, y, z):
         server = self.current_world.get_portal_at(x, y, z)
+        now = time.time()
 
-        if server is not None:
+        if server is not None and now - self.last_portal > 3:
+            self.last_portal = now
+            self.protocol.logger.info("Sending %s to %s.", self.protocol.display_name, server)
             self.send_portal(server)
 
     def send_world(self):
-        self.send_spawn()
+        self.spawn_player()
 
         # Clear geyser chunk cache from previous server
         if self.is_bedrock:
-            data = [
-                self.protocol.buff_type.pack_varint(0),
-                self.protocol.buff_type.pack_nbt(TagRoot({'': TagCompound({})})),
-                self.protocol.buff_type.pack_varint(1024),
-            ]
-
-            for i in range(0, 1024):
-                data.append(self.protocol.buff_type.pack_varint(127))
-
-            data.append(self.protocol.buff_type.pack_varint(0))
-            data.append(self.protocol.buff_type.pack_varint(0))
-
-            for x in range(-8, 8):
-                for y in range(-8, 8):
-                    self.protocol.send_packet("chunk_data", self.protocol.buff_type.pack("ii?", x, y, True), *data)
+            self.send_reset_world()
 
         # Chunk packets
         for packet in self.current_world.packets:
             self.protocol.send_packet(packet.get('type'), packet.get('packet'))
 
         # Start/stop rain as necessary
-        if self.current_world.weather == 'rain':
-            if self.raining is False:
-                self.protocol.send_packet('change_game_state', self.protocol.buff_type.pack("Bf", 2, 0))
-                self.raining = True
-        elif self.raining is True:
-            self.protocol.send_packet('change_game_state', self.protocol.buff_type.pack("Bf", 1, 0))
-            self.raining = False
+        self.send_weather(self.current_world.weather == 'rain')
 
         if self.is_bedrock:  # Current versions of geyser seem to ignore the time sometimes. Send repeatedly for now.
             self.protocol.ticker.add_loop(100, self.send_time)
         else:
             self.send_time()
 
-    def send_time(self):
-        # Time of day
-        self.protocol.send_packet('time_update',
-                                  self.protocol.buff_type.pack("Qq", 0,
-                                                               self.current_world.time
-                                                               if self.current_world.cycle is True
-                                                               else (0 - self.current_world.time)))
-
-    def send_spawn(self, effects=False):
-        spawn = self.current_world.spawn
-
-        self.protocol.send_packet("player_position_and_look",
-                                  self.protocol.buff_type.pack("dddff?", spawn.get('x'), spawn.get('y'), spawn.get('z'),
-                                                               spawn.get('yaw'), spawn.get('pitch'), 0b00000),
-                                  self.protocol.buff_type.pack_varint(0))
+    def spawn_player(self, effects=False):
+        self.send_spawn()
 
         if effects is True:
-            self.protocol.send_packet("effect",
-                                      self.protocol.buff_type.pack("i", 2003),
-                                      self.protocol.buff_type.pack_position(
-                                          int(spawn.get('x')),
-                                          int(spawn.get('y')),
-                                          int(spawn.get('z'))),
-                                      self.protocol.buff_type.pack("ib", 0, False))
+            self.send_spawn_effect()
 
         self.player_spawned = True
 
@@ -169,130 +129,58 @@ class Version(object, metaclass=abc.ABCMeta):
         self.protocol.ticker.add_delay(2, self.send_reset_sound)
         self.protocol.ticker.add_delay(20, self.send_music)
 
-    def send_tablist(self):
-        self.protocol.send_packet("player_list_header_footer",
-                                  self.protocol.buff_type.pack_string(json.dumps({
-                                      "text": "\n\ue300\n"
-                                  })),
-                                  self.protocol.buff_type.pack_string(json.dumps({"translate": ""})))
-
-        self.protocol.send_packet("player_list_item",
-                                  self.protocol.buff_type.pack_varint(0),
-                                  self.protocol.buff_type.pack_varint(1),
-                                  self.protocol.buff_type.pack_uuid(self.protocol.uuid),
-                                  self.protocol.buff_type.pack_string(self.protocol.display_name),
-                                  self.protocol.buff_type.pack_varint(0),
-                                  self.protocol.buff_type.pack_varint(1),
-                                  self.protocol.buff_type.pack_varint(1),
-                                  self.protocol.buff_type.pack_varint(0))
-
-    def send_keep_alive(self):
-        self.protocol.send_packet("keep_alive", self.protocol.buff_type.pack("Q", 0))
-
-    def send_portal(self, server):
-        now = time.time()
-
-        if now - self.last_portal > 3:
-            self.last_portal = now
-            self.protocol.logger.info("Sending %s to %s.", self.protocol.display_name, server)
-
-            connect = "Connect".encode('utf-8')
-            server = server.encode('utf-8')
-            message_format = 'H' + str(len(connect)) + 'sH' + str(len(server)) + 's'
-
-            self.protocol.send_packet("plugin_message",
-                                      self.protocol.buff_type.pack_string('bungeecord:main'),
-                                      self.protocol.buff_type.pack(message_format, len(connect), connect, len(server),
-                                                                   server))
-
-    def send_music(self):
-        spawn = self.current_world.spawn
-
-        self.send_stop_music()
-        self.protocol.send_packet("named_sound_effect",
-                                  self.protocol.buff_type.pack_string("minecraft:music.end"),
-                                  self.protocol.buff_type.pack_varint(2),
-                                  self.protocol.buff_type.pack("iiiff",
-                                                               int(spawn.get('x')),
-                                                               int(spawn.get('y')),
-                                                               int(spawn.get('z')), 100000.0, 1))
-
-    def send_stop_music(self):
-        self.protocol.send_packet("stop_sound", self.protocol.buff_type.pack("B", 2),
-                                  self.protocol.buff_type.pack_string("minecraft:music.game"))
-        self.protocol.send_packet("stop_sound", self.protocol.buff_type.pack("B", 2),
-                                  self.protocol.buff_type.pack_string("minecraft:music.creative"))
-
-    def send_reset_sound(self):
-        spawn = self.current_world.spawn
-
-        self.protocol.send_packet("named_sound_effect",
-                                  self.protocol.buff_type.pack_string("minecraft:item.trident.thunder"),
-                                  self.protocol.buff_type.pack_varint(6),
-                                  self.protocol.buff_type.pack("iiiff",
-                                                               int(spawn.get('x')),
-                                                               int(spawn.get('y')),
-                                                               int(spawn.get('z')), 100000.0, 1))
-
-    def send_commands(self):
-        commands = {
-            "name": None,
-            "suggestions": None,
-            "type": "root",
-            "executable": True,
-            "redirect": None,
-            "children": {
-                "reset": {
-                    "type": "literal",
-                    "name": "reset",
-                    "executable": True,
-                    "redirect": None,
-                    "children": dict(),
-                    "suggestions": None
-                },
-                "spawn": {
-                    "type": "literal",
-                    "name": "spawn",
-                    "executable": True,
-                    "redirect": None,
-                    "children": dict(),
-                    "suggestions": None
-                },
-                "hub": {
-                    "type": "literal",
-                    "name": "hub",
-                    "executable": True,
-                    "redirect": None,
-                    "children": dict(),
-                    "suggestions": None
-                },
-                "unlink": {
-                    "type": "literal",
-                    "name": "unlink",
-                    "executable": True,
-                    "redirect": None,
-                    "children": dict(),
-                    "suggestions": None
-                },
-            },
-        }
-
-        self.protocol.send_packet('declare_commands', self.protocol.buff_type.pack_commands(commands))
-
-    def send_inventory(self):
-        data = [
-            self.protocol.buff_type.pack('Bh', 0, 46)
-        ]
-
-        for i in range(0, 46):
-            data.append(self.protocol.buff_type.pack('?', False))
-
-        self.protocol.send_packet('window_items', *data)
-
     @abc.abstractmethod
     def send_join_game(self):
-        raise NotImplementedError('users must define send_join_game to use this base class')
+        raise NotImplementedError('send_join_game must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_spawn(self):
+        raise NotImplementedError('send_spawn must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_spawn_effect(self):
+        raise NotImplementedError('send_spawn_effect must be defined to use this base class')
 
     @abc.abstractmethod
     def send_respawn(self):
-        raise NotImplementedError('users must define send_respawn to use this base class')
+        raise NotImplementedError('send_respawn must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_reset_world(self):
+        raise NotImplementedError('send_reset_world must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_keep_alive(self):
+        raise NotImplementedError('send_keep_alive must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_time(self):
+        raise NotImplementedError('send_time must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_weather(self, rain=False):
+        raise NotImplementedError('send_weather must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_music(self, stop=False):
+        raise NotImplementedError('send_music must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_reset_sound(self):
+        raise NotImplementedError('send_reset_sound must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_commands(self):
+        raise NotImplementedError('send_commands must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_tablist(self):
+        raise NotImplementedError('send_tablist must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_inventory(self):
+        raise NotImplementedError('send_inventory must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_portal(self, server):
+        raise NotImplementedError('send_portal must be defined to use this base class')
