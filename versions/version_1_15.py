@@ -115,12 +115,9 @@ class Version_1_15(Version):
 
     def send_weather(self, rain=False):
         if rain:
-            if self.raining is False:
-                self.protocol.send_packet('change_game_state', self.protocol.buff_type.pack("Bf", 2, 0))
-                self.raining = True
-        elif self.raining is True:
+            self.protocol.send_packet('change_game_state', self.protocol.buff_type.pack("Bf", 2, 0))
+        else:
             self.protocol.send_packet('change_game_state', self.protocol.buff_type.pack("Bf", 1, 0))
-            self.raining = False
 
     def send_music(self, stop=False):
         spawn = self.current_world.spawn

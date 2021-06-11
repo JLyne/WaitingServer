@@ -10,10 +10,6 @@ class Version(object, metaclass=abc.ABCMeta):
         self.protocol = protocol
 
         self.current_world = None
-        self.current_position = None
-        self.raining = False
-
-        self.player_spawned = False
 
         self.last_portal = 0
         self.last_command = 0
@@ -68,7 +64,7 @@ class Version(object, metaclass=abc.ABCMeta):
             if now - self.last_command < 0.5:
                 return
 
-            self.send_spawn()
+            self.spawn_player(True)
         elif message == "/reset":
             if now - self.last_command < 2:
                 return
@@ -117,12 +113,7 @@ class Version(object, metaclass=abc.ABCMeta):
         if effects is True:
             self.send_spawn_effect()
 
-        self.player_spawned = True
-
     def reset_world(self):
-        self.player_spawned = False
-        self.raining = False
-
         self.send_respawn()
 
         self.protocol.ticker.add_delay(1, self.send_world)

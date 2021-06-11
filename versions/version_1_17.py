@@ -34,5 +34,3 @@ class Version_1_17(Version_1_16_2):
                                           int(spawn.get('y')),
                                           int(spawn.get('z'))),
                                       self.protocol.buff_type.pack("ib", 0, False))
-
-        self.player_spawned = True
