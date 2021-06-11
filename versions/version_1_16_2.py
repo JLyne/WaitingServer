@@ -3,6 +3,7 @@ from quarry.types.nbt import TagList, TagCompound, TagRoot, TagString, TagByte, 
 from versions import Version_1_16
 from waitingserver import Protocol
 
+
 class Version_1_16_2(Version_1_16):
     def __init__(self, protocol: Protocol, bedrock: False):
         super(Version_1_16_2, self).__init__(protocol, bedrock)
@@ -54,17 +55,17 @@ class Version_1_16_2(Version_1_16):
         })
 
         self.protocol.send_packet("join_game",
-                         self.protocol.buff_type.pack("i?BB", 0, False, 1, 1),
-                         self.protocol.buff_type.pack_varint(2),
-                         self.protocol.buff_type.pack_string("rtgame:waiting"),
-                         self.protocol.buff_type.pack_string("rtgame:reset"),
-                         self.protocol.buff_type.pack_nbt(codec),
-                         self.protocol.buff_type.pack_nbt(self.current_dimension),
-                         self.protocol.buff_type.pack_string("rtgame:waiting"),
-                         self.protocol.buff_type.pack("q", 0),
-                         self.protocol.buff_type.pack_varint(0),
-                         self.protocol.buff_type.pack_varint(32),
-                         self.protocol.buff_type.pack("????", False, True, False, False))
+                                  self.protocol.buff_type.pack("i?BB", 0, False, 1, 1),
+                                  self.protocol.buff_type.pack_varint(2),
+                                  self.protocol.buff_type.pack_string("rtgame:waiting"),
+                                  self.protocol.buff_type.pack_string("rtgame:reset"),
+                                  self.protocol.buff_type.pack_nbt(codec),
+                                  self.protocol.buff_type.pack_nbt(self.current_dimension),
+                                  self.protocol.buff_type.pack_string("rtgame:waiting"),
+                                  self.protocol.buff_type.pack("q", 0),
+                                  self.protocol.buff_type.pack_varint(0),
+                                  self.protocol.buff_type.pack_varint(32),
+                                  self.protocol.buff_type.pack("????", False, True, False, False))
 
     def send_respawn(self):
         self.protocol.send_packet("respawn",

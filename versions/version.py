@@ -4,10 +4,10 @@ import time
 import json
 
 from quarry.types.nbt import TagRoot, TagCompound
-from quarry.types.uuid import UUID
 
 import config
 from waitingserver import Protocol
+
 
 class Version(object, metaclass=abc.ABCMeta):
     def __init__(self, protocol: Protocol, bedrock: False):
@@ -35,7 +35,7 @@ class Version(object, metaclass=abc.ABCMeta):
         self.send_commands()
         self.send_world()
 
-        if self.is_bedrock: # Prevent geyser persisting previous server inventory
+        if self.is_bedrock:  # Prevent geyser persisting previous server inventory
             self.send_inventory()
 
         self.protocol.ticker.add_delay(10, self.send_tablist)
@@ -46,7 +46,7 @@ class Version(object, metaclass=abc.ABCMeta):
         y = buff.unpack('d')
         z = buff.unpack('d')
 
-        buff.unpack('b') # on_ground
+        buff.unpack('b')  # on_ground
 
         self.check_portals(x, y, z)
         self.check_bounds(x, y, z)
@@ -56,9 +56,9 @@ class Version(object, metaclass=abc.ABCMeta):
         y = buff.unpack('d')
         z = buff.unpack('d')
 
-        buff.unpack('f') # yaw
-        buff.unpack('f') # pitch
-        buff.unpack('b') # on_ground
+        buff.unpack('f')  # yaw
+        buff.unpack('f')  # pitch
+        buff.unpack('b')  # on_ground
 
         self.check_portals(x, y, z)
         self.check_bounds(x, y, z)
@@ -127,31 +127,35 @@ class Version(object, metaclass=abc.ABCMeta):
             self.protocol.send_packet('change_game_state', self.protocol.buff_type.pack("Bf", 1, 0))
             self.raining = False
 
-        if self.is_bedrock: # Current versions of geyser seem to ignore the time sometimes. Send repeatedly for now.
+        if self.is_bedrock:  # Current versions of geyser seem to ignore the time sometimes. Send repeatedly for now.
             self.protocol.ticker.add_loop(100, self.send_time)
         else:
             self.send_time()
 
     def send_time(self):
-         # Time of day
+        # Time of day
         self.protocol.send_packet('time_update',
-                         self.protocol.buff_type.pack("Qq", 0,
-                                             # Cycle
-                                             self.current_world.time  if self.current_world.cycle is True
-                                             else (0 - self.current_world.time)))
+                                  self.protocol.buff_type.pack("Qq", 0,
+                                                               self.current_world.time
+                                                               if self.current_world.cycle is True
+                                                               else (0 - self.current_world.time)))
 
-    def send_spawn(self, effects = False):
+    def send_spawn(self, effects=False):
         spawn = self.current_world.spawn
 
         self.protocol.send_packet("player_position_and_look",
-                        self.protocol.buff_type.pack("dddff?", spawn.get('x'), spawn.get('y'), spawn.get('z'), spawn.get('yaw'), spawn.get('pitch'), 0b00000),
-                                self.protocol.buff_type.pack_varint(0))
+                                  self.protocol.buff_type.pack("dddff?", spawn.get('x'), spawn.get('y'), spawn.get('z'),
+                                                               spawn.get('yaw'), spawn.get('pitch'), 0b00000),
+                                  self.protocol.buff_type.pack_varint(0))
 
         if effects is True:
             self.protocol.send_packet("effect",
-                             self.protocol.buff_type.pack("i", 2003),
-                             self.protocol.buff_type.pack_position(int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z'))),
-                             self.protocol.buff_type.pack("ib", 0, False))
+                                      self.protocol.buff_type.pack("i", 2003),
+                                      self.protocol.buff_type.pack_position(
+                                          int(spawn.get('x')),
+                                          int(spawn.get('y')),
+                                          int(spawn.get('z'))),
+                                      self.protocol.buff_type.pack("ib", 0, False))
 
         self.player_spawned = True
 
@@ -167,20 +171,20 @@ class Version(object, metaclass=abc.ABCMeta):
 
     def send_tablist(self):
         self.protocol.send_packet("player_list_header_footer",
-                         self.protocol.buff_type.pack_string(json.dumps({
-                            "text": "\n\ue300\n"
-                         })),
-                         self.protocol.buff_type.pack_string(json.dumps({"translate": ""})))
+                                  self.protocol.buff_type.pack_string(json.dumps({
+                                      "text": "\n\ue300\n"
+                                  })),
+                                  self.protocol.buff_type.pack_string(json.dumps({"translate": ""})))
 
         self.protocol.send_packet("player_list_item",
-                         self.protocol.buff_type.pack_varint(0),
-                         self.protocol.buff_type.pack_varint(1),
-                         self.protocol.buff_type.pack_uuid(self.protocol.uuid),
-                         self.protocol.buff_type.pack_string(self.protocol.display_name),
-                         self.protocol.buff_type.pack_varint(0),
-                         self.protocol.buff_type.pack_varint(1),
-                         self.protocol.buff_type.pack_varint(1),
-                         self.protocol.buff_type.pack_varint(0))
+                                  self.protocol.buff_type.pack_varint(0),
+                                  self.protocol.buff_type.pack_varint(1),
+                                  self.protocol.buff_type.pack_uuid(self.protocol.uuid),
+                                  self.protocol.buff_type.pack_string(self.protocol.display_name),
+                                  self.protocol.buff_type.pack_varint(0),
+                                  self.protocol.buff_type.pack_varint(1),
+                                  self.protocol.buff_type.pack_varint(1),
+                                  self.protocol.buff_type.pack_varint(0))
 
     def send_keep_alive(self):
         self.protocol.send_packet("keep_alive", self.protocol.buff_type.pack("Q", 0))
@@ -197,31 +201,38 @@ class Version(object, metaclass=abc.ABCMeta):
             message_format = 'H' + str(len(connect)) + 'sH' + str(len(server)) + 's'
 
             self.protocol.send_packet("plugin_message",
-                             self.protocol.buff_type.pack_string('bungeecord:main'),
-                             self.protocol.buff_type.pack(message_format, len(connect), connect, len(server), server))
+                                      self.protocol.buff_type.pack_string('bungeecord:main'),
+                                      self.protocol.buff_type.pack(message_format, len(connect), connect, len(server),
+                                                                   server))
 
     def send_music(self):
         spawn = self.current_world.spawn
 
         self.send_stop_music()
         self.protocol.send_packet("named_sound_effect",
-                         self.protocol.buff_type.pack_string("minecraft:music.end"),
-                         self.protocol.buff_type.pack_varint(2),
-                         self.protocol.buff_type.pack("iiiff", int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z')), 100000.0, 1))
-
+                                  self.protocol.buff_type.pack_string("minecraft:music.end"),
+                                  self.protocol.buff_type.pack_varint(2),
+                                  self.protocol.buff_type.pack("iiiff",
+                                                               int(spawn.get('x')),
+                                                               int(spawn.get('y')),
+                                                               int(spawn.get('z')), 100000.0, 1))
 
     def send_stop_music(self):
-        self.protocol.send_packet("stop_sound", self.protocol.buff_type.pack("B", 2), self.protocol.buff_type.pack_string("minecraft:music.game"))
-        self.protocol.send_packet("stop_sound", self.protocol.buff_type.pack("B", 2), self.protocol.buff_type.pack_string("minecraft:music.creative"))
+        self.protocol.send_packet("stop_sound", self.protocol.buff_type.pack("B", 2),
+                                  self.protocol.buff_type.pack_string("minecraft:music.game"))
+        self.protocol.send_packet("stop_sound", self.protocol.buff_type.pack("B", 2),
+                                  self.protocol.buff_type.pack_string("minecraft:music.creative"))
 
     def send_reset_sound(self):
         spawn = self.current_world.spawn
 
         self.protocol.send_packet("named_sound_effect",
-                         self.protocol.buff_type.pack_string("minecraft:item.trident.thunder"),
-                         self.protocol.buff_type.pack_varint(6),
-                         self.protocol.buff_type.pack("iiiff", int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z')),
-                                             100000.0, 1))
+                                  self.protocol.buff_type.pack_string("minecraft:item.trident.thunder"),
+                                  self.protocol.buff_type.pack_varint(6),
+                                  self.protocol.buff_type.pack("iiiff",
+                                                               int(spawn.get('x')),
+                                                               int(spawn.get('y')),
+                                                               int(spawn.get('z')), 100000.0, 1))
 
     def send_commands(self):
         commands = {

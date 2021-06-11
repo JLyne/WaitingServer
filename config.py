@@ -22,6 +22,7 @@ default_world = {
     '1.17': None
 }
 
+
 def load_world_config():
     global default_world
     global worlds
@@ -54,8 +55,8 @@ def load_world_config():
                 logger.error('Folder for world %s does not exist. Skipped.', name)
                 continue
 
-            for subfolder in glob.glob(os.path.join(folder_path, '*/')):
-                version = os.path.basename(os.path.normpath(subfolder))
+            for subFolder in glob.glob(os.path.join(folder_path, '*/')):
+                version = os.path.basename(os.path.normpath(subFolder))
 
                 if worlds.get(version) is not None:
                     world = World(name, folder, version, environment, bounds, spawn, portals)
@@ -76,8 +77,10 @@ def load_world_config():
             else:
                 default_world[version] = next(iter(worlds[version].values()))
 
+
 def get_worlds():
     return worlds
+
 
 def get_default_world(version):
     return default_world.get(version, None)

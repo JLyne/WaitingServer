@@ -1,5 +1,4 @@
 import glob
-import json
 import os
 import re
 import math
@@ -9,17 +8,17 @@ from quarry.types.buffer import Buffer
 
 class World:
 
-    def __init__(self, name: str, folder: str, version: str, environment: dict, bounds: dict, spawn: str, portals: list):
+    def __init__(self, name: str, folder: str, version: str, env: dict, bounds: dict, spawn: str, portals: list):
         self.name = name
-        self.time = environment.get('time', 0)
-        self.dimension = environment.get('dimension', 'Overworld')
-        self.weather = environment.get('weather', 'clear')
-        self.cycle = environment.get('cycle', False)
+        self.time = env.get('time', 0)
+        self.dimension = env.get('dimension', 'Overworld')
+        self.weather = env.get('weather', 'clear')
+        self.cycle = env.get('cycle', False)
 
         self.packets = list()
         self.portals = list()
         self.bounds = None
-        self.spawn = { "x": 0, "y": 0, "z": 0, "yaw": 0, "yaw_256": 0, "pitch": 0}
+        self.spawn = {"x": 0, "y": 0, "z": 0, "yaw": 0, "yaw_256": 0, "pitch": 0}
 
         path = os.path.join(os.getcwd(), 'packets', folder, version, '*.bin')
 
@@ -93,7 +92,7 @@ class World:
             pos2y = max(portal['pos1'][1], portal['pos2'][1])
             pos2z = max(portal['pos1'][2], portal['pos2'][2])
 
-            if pos1x <= x <= pos2x and pos1y <= y <= pos2y and pos1z <= z <= pos2z :
+            if pos1x <= x <= pos2x and pos1y <= y <= pos2y and pos1z <= z <= pos2z:
                 return portal['server']
 
         return None

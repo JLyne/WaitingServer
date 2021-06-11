@@ -1,6 +1,3 @@
-"""
-Empty server that send the _bare_ minimum data to keep a minecraft client connected
-"""
 from argparse import ArgumentParser
 from copy import deepcopy
 
@@ -15,6 +12,7 @@ from prometheus import set_players_online, init_prometheus
 
 worlds = list()
 
+
 class Protocol(ServerProtocol):
     def __init__(self, factory, remote_addr):
         from versions import Version_1_15, Version_1_16, Version_1_16_2, Version_1_17
@@ -25,10 +23,10 @@ class Protocol(ServerProtocol):
         self.is_bedrock = False
         self.version = None
         self.versions = {
-            578 : Version_1_15,
-            736 : Version_1_16,
-            751 : Version_1_16_2,
-            755 : Version_1_17
+            578: Version_1_15,
+            736: Version_1_16,
+            751: Version_1_16_2,
+            755: Version_1_17
         }
 
         super(Protocol, self).__init__(factory, remote_addr)
@@ -44,7 +42,8 @@ class Protocol(ServerProtocol):
         split_host = str.split(p_connect_host, "\00")
 
         if len(split_host) >= 3:
-            #TODO: Should probably verify the encrypted data in some way. Not important until something on this server uses uuids
+            # TODO: Should probably verify the encrypted data in some way.
+            # Not important until something on this server uses uuids
             if split_host[1] == 'Geyser-Floodgate':
                 self.is_bedrock = True
 
@@ -87,6 +86,7 @@ class Protocol(ServerProtocol):
         set_players_online(len(self.factory.players))
 
         self.version.player_joined()
+
     def player_left(self):
         super().player_left()
 
@@ -100,6 +100,7 @@ class Protocol(ServerProtocol):
 
     def packet_chat_message(self, buff):
         self.version.packet_chat_message(buff)
+
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -128,4 +129,3 @@ if __name__ == "__main__":
     print('Server started')
     print("Listening on {}:{}".format(args.host, args.port))
     reactor.run()
-

@@ -1,4 +1,4 @@
-from quarry.types.nbt import TagList, TagCompound, TagRoot, TagString, TagByte, TagFloat, TagLong, TagInt
+from quarry.types.nbt import TagList, TagCompound, TagRoot, TagString, TagByte, TagFloat, TagInt
 
 from versions import Version_1_15
 from waitingserver import Protocol
@@ -33,16 +33,16 @@ class Version_1_16(Version_1_15):
         })
 
         self.protocol.send_packet("join_game",
-                         self.protocol.buff_type.pack("iBB", 0, 1, 1),
-                         self.protocol.buff_type.pack_varint(2),
-                         self.protocol.buff_type.pack_string("rtgame:waiting"),
-                         self.protocol.buff_type.pack_string("rtgame:reset"),
-                         self.protocol.buff_type.pack_nbt(codec),
-                         self.protocol.buff_type.pack_string("minecraft:overworld"),
-                         self.protocol.buff_type.pack_string("rtgame:waiting"),
-                         self.protocol.buff_type.pack("qB", 0, 0),
-                         self.protocol.buff_type.pack_varint(32),
-                         self.protocol.buff_type.pack("????", False, True, False, False))
+                                  self.protocol.buff_type.pack("iBB", 0, 1, 1),
+                                  self.protocol.buff_type.pack_varint(2),
+                                  self.protocol.buff_type.pack_string("rtgame:waiting"),
+                                  self.protocol.buff_type.pack_string("rtgame:reset"),
+                                  self.protocol.buff_type.pack_nbt(codec),
+                                  self.protocol.buff_type.pack_string("minecraft:overworld"),
+                                  self.protocol.buff_type.pack_string("rtgame:waiting"),
+                                  self.protocol.buff_type.pack("qB", 0, 0),
+                                  self.protocol.buff_type.pack_varint(32),
+                                  self.protocol.buff_type.pack("????", False, True, False, False))
 
     def send_respawn(self):
         self.protocol.send_packet("respawn",
@@ -62,7 +62,10 @@ class Version_1_16(Version_1_15):
 
         self.send_stop_music()
         self.protocol.send_packet("named_sound_effect",
-                         self.protocol.buff_type.pack_string("minecraft:music.under_water"),
-                         self.protocol.buff_type.pack_varint(2),
-                         self.protocol.buff_type.pack("iiiff", int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z')), 100000.0, 0.5))
+                                  self.protocol.buff_type.pack_string("minecraft:music.under_water"),
+                                  self.protocol.buff_type.pack_varint(2),
+                                  self.protocol.buff_type.pack("iiiff",
+                                                               int(spawn.get('x')),
+                                                               int(spawn.get('y')),
+                                                               int(spawn.get('z')), 100000.0, 0.5))
 
