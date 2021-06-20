@@ -1,5 +1,5 @@
 from quarry.types.chunk import PackedArray
-from quarry.types.nbt import TagInt, TagLongArray, TagCompound
+from quarry.types.nbt import TagInt, TagLongArray, TagCompound, TagRoot
 
 from versions import Version_1_16_2
 from waitingserver import Protocol
