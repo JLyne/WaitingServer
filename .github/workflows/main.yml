@@ -1,0 +1,62 @@
+name: Package Application with Pyinstaller
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-linux:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Package Application
+      uses: JackMcKew/pyinstaller-action-linux@main
+      with:
+        path: waitingserver
+        
+    - name: copy file
+      uses: canastro/copy-file-action@master
+      with:
+        source: waitingserver/dist/linux/server
+        target: server
+
+    - uses: actions/upload-artifact@v2
+      with:
+        if-no-files-found: error
+        name: waitingserver-linux
+        path: |
+          server
+          packets
+          config.yml
+        
+  build-windows:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Package Application
+      uses: JackMcKew/pyinstaller-action-windows@main
+      with:
+        path: waitingserver
+        
+    - name: copy file
+      uses: canastro/copy-file-action@master
+      with:
+        source: waitingserver/dist/windows/server.exe
+        target: server
+
+    - uses: actions/upload-artifact@v2
+      with:
+        if-no-files-found: error
+        name: waitingserver-windows
+        path: |
+          server
+          packets
+          config.yml
