@@ -1,7 +1,8 @@
 import abc
 import time
 
-from waitingserver.server import Protocol, config
+from waitingserver.server import Protocol
+from waitingserver.config import get_default_world
 
 
 class Version(object, metaclass=abc.ABCMeta):
@@ -20,7 +21,7 @@ class Version(object, metaclass=abc.ABCMeta):
         self.protocol.ticker.add_loop(100, self.send_keep_alive)  # Keep alive packets
         self.protocol.ticker.add_loop(200, lambda: self.send_music(True))
 
-        self.current_world = config.get_default_world(self.version_name)
+        self.current_world = get_default_world(self.version_name)
 
         self.send_join_game()
         self.send_commands()
