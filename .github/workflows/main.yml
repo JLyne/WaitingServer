@@ -22,7 +22,10 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: waitingserver
-        path: waitingserver/dist/linux
+        path: |
+          waitingserver/dist/linux
+          waitingserver/packets
+          config.yml
         
   build-windows:
 
@@ -39,4 +42,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: waitingserver.exe
-        path: waitingserver/dist/windows
+        path: |
+          waitingserver/dist/windows
+          waitingserver/packets
+          config.yml
