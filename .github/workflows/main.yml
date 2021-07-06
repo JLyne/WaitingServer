@@ -49,7 +49,7 @@ jobs:
     - name: copy file
       uses: canastro/copy-file-action@master
       with:
-        source: waitingserver/dist/windows/server
+        source: waitingserver/dist/windows/server.exe
         target: server
 
     - uses: actions/upload-artifact@v2
