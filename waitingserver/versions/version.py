@@ -1,8 +1,7 @@
 import abc
 import time
 
-import config
-from waitingserver import Protocol
+from waitingserver.server import Protocol, config
 
 
 class Version(object, metaclass=abc.ABCMeta):

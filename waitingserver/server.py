@@ -1,3 +1,7 @@
+import logging
+import os
+import sys
+
 from argparse import ArgumentParser
 from copy import deepcopy
 
@@ -11,6 +15,25 @@ from quarry.types.uuid import UUID
 from prometheus import set_players_online, init_prometheus
 
 worlds = list()
+
+if getattr(sys, 'frozen', False):  # PyInstaller adds this attribute
+    # Running in a bundle
+    path = os.path.join(sys._MEIPASS, 'waitingserver')
+else:
+    # Running in normal Python environment
+    path = os.path.dirname(__file__)
+
+# Logging
+logger = logging.getLogger('waitingserver')
+logger.setLevel(logging.DEBUG)
+
+file_handler = logging.FileHandler(filename='waitingserver.log')
+console_handler = logging.StreamHandler(sys.stderr)
+formatter = logging.Formatter('[%(asctime)s %(levelname)s]: [%(name)s] %(message)s')
+console_handler.setFormatter(formatter)
+file_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
 
 
 class Protocol(ServerProtocol):
@@ -31,6 +54,9 @@ class Protocol(ServerProtocol):
         }
 
         super(Protocol, self).__init__(factory, remote_addr)
+
+        self.logger.addHandler(console_handler)
+        self.logger.addHandler(file_handler)
 
     def packet_handshake(self, buff):
         buff2 = deepcopy(buff)
@@ -127,6 +153,6 @@ if __name__ == "__main__":
         init_prometheus(metrics_port)
 
     server_factory.listen(args.host, args.port)
-    print('Server started')
-    print("Listening on {}:{}".format(args.host, args.port))
+    logger.info('Server started')
+    logger.info("Listening on {}:{}".format(args.host, args.port))
     reactor.run()
