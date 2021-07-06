@@ -50,13 +50,13 @@ jobs:
       uses: canastro/copy-file-action@master
       with:
         source: waitingserver/dist/windows/server.exe
-        target: server
+        target: server.exe
 
     - uses: actions/upload-artifact@v2
       with:
         if-no-files-found: error
         name: waitingserver-windows
         path: |
-          server
+          server.exe
           packets
           config.yml
