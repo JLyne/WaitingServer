@@ -18,13 +18,20 @@ jobs:
       uses: JackMcKew/pyinstaller-action-linux@main
       with:
         path: waitingserver
+        
+    - name: copy file
+      uses: canastro/copy-file-action@master
+      with:
+        source: waitingserver/dist/linux/server
+        target: server
 
     - uses: actions/upload-artifact@v2
       with:
-        name: waitingserver
+        if-no-files-found: error
+        name: waitingserver-linux
         path: |
-          waitingserver/dist/linux
-          waitingserver/packets
+          server
+          packets
           config.yml
         
   build-windows:
@@ -38,11 +45,18 @@ jobs:
       uses: JackMcKew/pyinstaller-action-windows@main
       with:
         path: waitingserver
+        
+    - name: copy file
+      uses: canastro/copy-file-action@master
+      with:
+        source: waitingserver/dist/windows/server
+        target: server
 
     - uses: actions/upload-artifact@v2
       with:
-        name: waitingserver.exe
+        if-no-files-found: error
+        name: waitingserver-windows
         path: |
-          waitingserver/dist/windows
-          waitingserver/packets
+          server
+          packets
           config.yml
