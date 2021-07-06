@@ -38,7 +38,7 @@ logger.addHandler(file_handler)
 
 class Protocol(ServerProtocol):
     def __init__(self, factory, remote_addr):
-        from versions import Version_1_15, Version_1_16, Version_1_16_2, Version_1_17, Version_1_17_1
+        from waitingserver.versions import Version_1_15, Version_1_16, Version_1_16_2, Version_1_17, Version_1_17_1
         self.uuid = UUID.from_offline_player('NotKatuen')
 
         self.forwarded_uuid = None
