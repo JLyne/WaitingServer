@@ -1,8 +1,8 @@
 import json
 
 from quarry.types.nbt import TagRoot, TagCompound
-from versions import Version
-from waitingserver import Protocol
+from waitingserver.versions import Version
+from waitingserver.server import Protocol
 
 
 class Version_1_15(Version):

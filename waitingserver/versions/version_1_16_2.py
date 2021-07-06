@@ -1,7 +1,8 @@
+import os.path
 from quarry.types.nbt import TagList, TagCompound, TagRoot, TagString, TagByte, TagFloat, TagInt, NBTFile
 
-from versions import Version_1_16
-from waitingserver import Protocol
+from waitingserver.versions import Version_1_16
+from waitingserver.server import Protocol, path
 
 
 class Version_1_16_2(Version_1_16):
@@ -21,7 +22,7 @@ class Version_1_16_2(Version_1_16):
             '': TagCompound(self.dimension_settings),
         })
 
-        self.biomes = NBTFile(TagRoot({})).load('biomes.nbt')
+        self.biomes = NBTFile(TagRoot({})).load(os.path.join(path, 'biomes.nbt'))
 
     def get_dimension_settings(self):
         return {

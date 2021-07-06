@@ -5,7 +5,7 @@ import glob
 
 from yaml import SafeLoader
 
-from world import World
+from waitingserver.world import World
 
 import yaml
 
@@ -29,7 +29,7 @@ def load_world_config():
     global default_world
     global worlds
 
-    with open(r'config.yml') as file:
+    with open(r'./config.yml') as file:
         config = yaml.load(file, Loader=SafeLoader)
         default = config.get('default-world', None)
         default_exists = {
@@ -51,7 +51,7 @@ def load_world_config():
                 logger.error('World %s has no folder defined. Skipped.', name)
                 continue
 
-            folder_path = os.path.join(os.getcwd(), 'packets', folder)
+            folder_path = os.path.join(os.getcwd(), './packets', folder)
 
             if os.path.exists(folder_path) is False:
                 logger.error('Folder for world %s does not exist. Skipped.', name)

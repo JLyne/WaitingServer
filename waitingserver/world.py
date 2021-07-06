@@ -20,7 +20,7 @@ class World:
         self.bounds = None
         self.spawn = {"x": 0, "y": 0, "z": 0, "yaw": 0, "yaw_256": 0, "pitch": 0}
 
-        path = os.path.join(os.getcwd(), 'packets', folder, version, '*.bin')
+        path = os.path.join(os.getcwd(), './packets', folder, version, '*.bin')
 
         for filename in sorted(glob.glob(path)):
             file = open(filename, 'rb')
