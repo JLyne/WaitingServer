@@ -47,4 +47,4 @@ class Version_1_17(Version_1_16_2):
     def send_reset_world(self):
         for x in range(-8, 8):
             for y in range(-8, 8):
-                self.protocol.send_packet("chunk_data", self.protocol.buff_type.pack("ii", x, y), *self.empty_chunk)
+                self.protocol.send_packet("chunk_data", self.protocol.buff_type.pack("ii", x, y), self.empty_chunk)
