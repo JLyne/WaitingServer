@@ -3,6 +3,8 @@ from waitingserver.server import Protocol
 
 
 class Version_1_17_1(Version_1_17):
+    protocol_version = 756
+
     def __init__(self, protocol: Protocol, bedrock: False):
         super(Version_1_17_1, self).__init__(protocol, bedrock)
 

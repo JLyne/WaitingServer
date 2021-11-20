@@ -10,21 +10,9 @@ from waitingserver.world import World
 import yaml
 
 logger = logging.getLogger('config')
-worlds = {
-    '1.15': {},
-    '1.16': {},
-    '1.16.2': {},
-    '1.17': {},
-    '1.18pre4': {}
-}
 
-default_world = {
-    '1.15': None,
-    '1.16': None,
-    '1.16.2': None,
-    '1.17': None,
-    '1.18pre4': None
-}
+worlds = {}
+default_world = {}
 
 
 def load_world_config():
@@ -34,12 +22,7 @@ def load_world_config():
     with open(r'./config.yml') as file:
         config = yaml.load(file, Loader=SafeLoader)
         default = config.get('default-world', None)
-        default_exists = {
-            '1.15': False,
-            '1.16': False,
-            '1.16.2': False,
-            '1.17': False
-        }
+        default_exists = {}
 
         for w in config.get('worlds', list()):
             name = w.get('name', 'Untitled')
@@ -62,7 +45,9 @@ def load_world_config():
             for subFolder in glob.glob(os.path.join(folder_path, '*/')):
                 version = os.path.basename(os.path.normpath(subFolder))
 
-                if worlds.get(version) is not None:
+                if worlds.get(version) is None:
+                    worlds[version] = {}
+
                     world = World(name, folder, version, environment, bounds, spawn, portals)
                     logger.info('Loaded {} for version {}', world.name, version)
 
@@ -76,7 +61,7 @@ def load_world_config():
                 logger.error('No worlds defined for {}'.format(str(version)))
                 exit(1)
 
-            if default_exists[version]:
+            if default_exists.get(version) is True:
                 default_world[version] = worlds[version][default]
             else:
                 default_world[version] = next(iter(worlds[version].values()))

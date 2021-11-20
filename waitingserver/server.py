@@ -35,25 +35,16 @@ file_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 
+versions = {}
 
 class Protocol(ServerProtocol):
     def __init__(self, factory, remote_addr):
-        from waitingserver.versions import Version_1_15, Version_1_16, Version_1_16_2, Version_1_17, Version_1_17_1, \
-            Version_1_18pre4
         self.uuid = UUID.from_offline_player('NotKatuen')
 
         self.forwarded_uuid = None
         self.forwarded_host = None
         self.is_bedrock = False
         self.version = None
-        self.versions = {
-            578: Version_1_15,
-            736: Version_1_16,
-            751: Version_1_16_2,
-            755: Version_1_17,
-            756: Version_1_17_1,
-            1073741876: Version_1_18pre4
-        }
 
         super(Protocol, self).__init__(factory, remote_addr)
 
@@ -64,7 +55,7 @@ class Protocol(ServerProtocol):
         buff2 = deepcopy(buff)
         super().packet_handshake(buff)
 
-        p_protocol_version = buff2.unpack_varint()
+        buff2.unpack_varint()
         p_connect_host = buff2.unpack_string()
 
         # Bungeecord ip forwarding, ip/uuid is included in host string separated by \00s
@@ -92,8 +83,9 @@ class Protocol(ServerProtocol):
 
         version = None
 
-        for pv, v in self.versions.items():
-            if p_protocol_version >= pv:
+        # Select version handler
+        for protocol_version, v in versions.items():
+            if self.protocol_version >= protocol_version:
                 version = v
 
         if version is not None:
@@ -131,6 +123,16 @@ class Protocol(ServerProtocol):
         self.version.packet_chat_message(buff)
 
 
+# Build dictionary of protocol version -> version class
+# Local import to prevent circlular import issues
+def build_versions():
+    import waitingserver.versions
+
+    for version in vars(waitingserver.versions).values():
+        if hasattr(version, 'protocol_version') and version.protocol_version is not None:
+            versions[version.protocol_version] = version
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-a", "--host", default="127.0.0.1", help="bind address")
@@ -150,6 +152,7 @@ if __name__ == "__main__":
     metrics_port = args.metrics
 
     load_world_config()
+    build_versions()
 
     if metrics_port is not None:
         init_prometheus(metrics_port)

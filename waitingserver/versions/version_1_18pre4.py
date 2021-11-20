@@ -1,17 +1,23 @@
 import os
 
+from quarry.types.buffer import Buffer
 from quarry.types.nbt import TagCompound, TagRoot, TagString, TagList, NBTFile, TagInt
 
 from waitingserver.versions import Version_1_17_1
-from waitingserver.server import Protocol, path
+from waitingserver.server import path
 
 
 class Version_1_18pre4(Version_1_17_1):
-    def __init__(self, protocol: Protocol, bedrock: False):
-        super(Version_1_18pre4, self).__init__(protocol, bedrock)
-        self.version_name = '1.18pre4'
+    protocol_version = 1073741876
+    chunk_format = '1.18pre4'
 
-        self.biomes = NBTFile(TagRoot({})).load(os.path.join(path, 'biomes', '1.18pre4.nbt'))
+    biomes = NBTFile(TagRoot({})).load(os.path.join(path, 'biomes', chunk_format + '.nbt'))
+
+    empty_chunk_buffer = Buffer(open(os.path.join(path, 'empty_chunk', chunk_format + '.bin'), 'rb').read())
+    empty_chunk_buffer.unpack("i")
+    empty_chunk_buffer.unpack("i")
+
+    empty_chunk = empty_chunk_buffer.read()
 
     def get_dimension_settings(self):
         settings = super().get_dimension_settings()
@@ -47,4 +53,5 @@ class Version_1_18pre4(Version_1_17_1):
                                   self.protocol.buff_type.pack_varint(32),
                                   self.protocol.buff_type.pack_varint(0),
                                   self.protocol.buff_type.pack("????", False, True, False, False))
+
 

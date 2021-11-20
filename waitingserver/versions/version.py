@@ -6,6 +6,9 @@ from waitingserver.config import get_default_world
 
 
 class Version(object, metaclass=abc.ABCMeta):
+    protocol_version = None
+    chunk_format = None
+
     def __init__(self, protocol: Protocol, bedrock: False):
         self.protocol = protocol
 
@@ -14,14 +17,13 @@ class Version(object, metaclass=abc.ABCMeta):
         self.last_portal = 0
         self.last_command = 0
 
-        self.version_name = None
         self.is_bedrock = bedrock
 
     def player_joined(self):
         self.protocol.ticker.add_loop(100, self.send_keep_alive)  # Keep alive packets
         self.protocol.ticker.add_loop(200, lambda: self.send_music(True))
 
-        self.current_world = get_default_world(self.version_name)
+        self.current_world = get_default_world(self.chunk_format)
 
         self.send_join_game()
         self.send_commands()
