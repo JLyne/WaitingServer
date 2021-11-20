@@ -11,7 +11,6 @@ quarry_data = os.path.join(split(quarry.__file__)[0], 'data')
 datas = [
     ( 'biomes/*.nbt', 'waitingserver/biomes' ),
     ( 'empty_chunk/*.bin', 'waitingserver/empty_chunk' ),
-    ( 'empty_chunk/*.bin', 'queueserver/empty_chunk' ),
     ( 'data/1073741876_1.18pre4.csv', 'quarry/data/packets' ),
     ( 'data/1073741876_1.18pre4.nbt', 'quarry/data/data_packs' ),
 ]
