@@ -1,41 +1,15 @@
-import logging
-import os
-import sys
-
-from argparse import ArgumentParser
 from copy import deepcopy
 
-
-from twisted.internet import reactor
-from quarry.net.server import ServerFactory, ServerProtocol
-
+from quarry.net.server import ServerProtocol
 from quarry.types.uuid import UUID
 
-from waitingserver.prometheus import set_players_online, init_prometheus
-from waitingserver.config import load_world_config
+from waitingserver.log import file_handler, console_handler
+from waitingserver.prometheus import set_players_online
 
 worlds = list()
 
-if getattr(sys, 'frozen', False):  # PyInstaller adds this attribute
-    # Running in a bundle
-    path = os.path.join(sys._MEIPASS, 'waitingserver')
-else:
-    # Running in normal Python environment
-    path = os.path.dirname(__file__)
-
-# Logging
-logger = logging.getLogger('waitingserver')
-logger.setLevel(logging.DEBUG)
-
-file_handler = logging.FileHandler(filename='waitingserver.log')
-console_handler = logging.StreamHandler(sys.stderr)
-formatter = logging.Formatter('[%(asctime)s %(levelname)s]: [%(name)s] %(message)s')
-console_handler.setFormatter(formatter)
-file_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
-logger.addHandler(file_handler)
-
 versions = {}
+
 
 class Protocol(ServerProtocol):
     def __init__(self, factory, remote_addr):
@@ -131,33 +105,3 @@ def build_versions():
     for version in vars(waitingserver.versions).values():
         if hasattr(version, 'protocol_version') and version.protocol_version is not None:
             versions[version.protocol_version] = version
-
-
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("-a", "--host", default="127.0.0.1", help="bind address")
-    parser.add_argument("-p", "--port", default=25567, type=int, help="bind port")
-    parser.add_argument("-m", "--max", default=65535, type=int, help="player count")
-    parser.add_argument("-r", "--metrics", default=None, type=int, help="expose prometheus metrics on specified port")
-
-    args = parser.parse_args()
-
-    server_factory = ServerFactory()
-    server_factory.protocol = Protocol
-    server_factory.max_players = args.max
-    server_factory.motd = "Waiting Server"
-    server_factory.online_mode = False
-    server_factory.compression_threshold = 1500
-
-    metrics_port = args.metrics
-
-    load_world_config()
-    build_versions()
-
-    if metrics_port is not None:
-        init_prometheus(metrics_port)
-
-    server_factory.listen(args.host, args.port)
-    logger.info('Server started')
-    logger.info("Listening on {}:{}".format(args.host, args.port))
-    reactor.run()

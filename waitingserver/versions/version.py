@@ -1,9 +1,11 @@
 import abc
 import time
+from pathlib import Path
 
-from waitingserver.server import Protocol
+from waitingserver.protocol import Protocol
 from waitingserver.config import get_default_world
 
+parent_folder = Path(__file__).parent.parent
 
 class Version(object, metaclass=abc.ABCMeta):
     protocol_version = None

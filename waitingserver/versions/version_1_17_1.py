@@ -1,5 +1,5 @@
 from waitingserver.versions import Version_1_17
-from waitingserver.server import Protocol
+from waitingserver.protocol import Protocol
 
 
 class Version_1_17_1(Version_1_17):
