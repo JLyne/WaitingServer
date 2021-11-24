@@ -5,6 +5,8 @@
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/venv-linux/lib" />
       <excludeFolder url="file://$MODULE_DIR$/venv-linux/lib64" />
+      <excludeFolder url="file://$MODULE_DIR$/venv-linux" />
+      <excludeFolder url="file://$MODULE_DIR$/venv-linux/include" />
     </content>
     <orderEntry type="jdk" jdkName="3.8 @ Ubuntu" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
