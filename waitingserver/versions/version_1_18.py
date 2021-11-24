@@ -4,13 +4,12 @@ from quarry.types.buffer import Buffer
 from quarry.types.nbt import TagCompound, TagRoot, TagString, TagList, NBTFile, TagInt
 
 from waitingserver.versions import Version_1_17_1
-from waitingserver.protocol import Protocol
 from waitingserver.versions.version import parent_folder
 
 
-class Version_1_18pre4(Version_1_17_1):
-    protocol_version = 1073741876
-    chunk_format = '1.18pre4'
+class Version_1_18(Version_1_17_1):
+    protocol_version = 757
+    chunk_format = '1.18'
 
     biomes = NBTFile(TagRoot({})).load(os.path.join(parent_folder, 'biomes', chunk_format + '.nbt'))
 
