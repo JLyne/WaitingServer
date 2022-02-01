@@ -31,7 +31,7 @@ args = parser.parse_args()
 metrics_port = args.metrics
 
 if args.bungeecord is True and args.velocity is True:
-    logging.getLogger('main').error("Cannot use both bungeecord and velocity forwarding at the same time.")
+    logger.error("Cannot use both bungeecord and velocity forwarding at the same time.")
     exit(1)
 
 if args.velocity is True:
