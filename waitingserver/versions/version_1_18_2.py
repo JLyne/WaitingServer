@@ -1,4 +1,4 @@
-from quarry.types.nbt import TagCompound, TagRoot, TagString, TagList, TagInt
+from quarry.types.nbt import TagString
 
 from waitingserver.versions import Version_1_18
 
