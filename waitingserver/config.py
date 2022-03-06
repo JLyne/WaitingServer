@@ -6,10 +6,13 @@ import glob
 from yaml import SafeLoader
 
 from waitingserver.world import World
-
+from waitingserver.log import file_handler, console_handler
 import yaml
 
 logger = logging.getLogger('config')
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
+logger.setLevel(logging.DEBUG)
 
 worlds = {}
 default_world = {}
@@ -48,8 +51,8 @@ def load_world_config():
                 if worlds.get(version) is None:
                     worlds[version] = {}
 
-                    world = World(name, folder, version, environment, bounds, spawn, portals)
-                    logger.info('Loaded {} for version {}', world.name, version)
+                world = World(name, folder, version, environment, bounds, spawn, portals)
+                logger.info('Loaded {} for version {}'.format(world.name, version))
 
                     if default == world.name:
                         default_exists[version] = True
