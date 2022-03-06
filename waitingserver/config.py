@@ -54,10 +54,10 @@ def load_world_config():
                 world = World(name, folder, version, environment, bounds, spawn, portals)
                 logger.info('Loaded {} for version {}'.format(world.name, version))
 
-                    if default == world.name:
-                        default_exists[version] = True
+                if default == world.name:
+                    default_exists[version] = True
 
-                    worlds[version][world.name] = world
+                worlds[version][world.name] = world
 
         for version in worlds:
             if len(worlds[version]) == 0:
