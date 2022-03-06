@@ -102,3 +102,7 @@ class Version_1_16_2(Version_1_16):
             cls.biomes = NBTFile(TagRoot({})).load(os.path.join(parent_folder, 'biomes', cls.chunk_format + '.nbt'))
 
         return cls.biomes
+
+    def send_time(self):
+        if self.current_world.cycle is True:
+            super().send_time()
