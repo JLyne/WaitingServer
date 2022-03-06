@@ -51,8 +51,27 @@ class Version_1_15(Version):
                     "children": dict(),
                     "suggestions": None
                 },
-            },
+            }
         }
+
+        if self.protocol.voting_mode is True:
+            self.commands["children"]["next"] = {
+                "type": "literal",
+                "name": "next",
+                "executable": True,
+                "redirect": None,
+                "children": dict(),
+                "suggestions": None
+            }
+
+            self.commands["children"]["prev"] = {
+                "type": "literal",
+                "name": "prev",
+                "executable": True,
+                "redirect": None,
+                "children": dict(),
+                "suggestions": None
+            }
 
     def send_join_game(self):
         self.protocol.send_packet("join_game",
