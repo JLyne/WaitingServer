@@ -21,7 +21,7 @@ class Version_1_17(Version_1_16_2):
 
         return settings
 
-    def send_spawn(self, effects = False):
+    def send_spawn(self, effects=False):
         spawn = self.current_world.spawn
 
         self.protocol.send_packet("player_position_and_look",
@@ -31,13 +31,7 @@ class Version_1_17(Version_1_16_2):
                                   self.protocol.buff_type.pack_varint(0), self.protocol.buff_type.pack("?", True))
 
         if effects is True:
-            self.protocol.send_packet("effect",
-                                      self.protocol.buff_type.pack("i", 2003),
-                                      self.protocol.buff_type.pack_position(
-                                          int(spawn.get('x')),
-                                          int(spawn.get('y')),
-                                          int(spawn.get('z'))),
-                                      self.protocol.buff_type.pack("ib", 0, False))
+            self.send_spawn_effect()
 
     def send_reset_world(self):
         empty_chunk = self.__class__.get_empty_chunk()

@@ -80,6 +80,14 @@ class Version_1_15(Version):
                                       int(spawn.get('z'))),
                                   self.protocol.buff_type.pack("ib", 0, False))
 
+        self.protocol.send_packet("named_sound_effect",
+                                  self.protocol.buff_type.pack_string("minecraft:entity.enderman.teleport"),
+                                  self.protocol.buff_type.pack_varint(6),
+                                  self.protocol.buff_type.pack("iiiff",
+                                                               int(spawn.get('x')),
+                                                               int(spawn.get('y')),
+                                                               int(spawn.get('z')), 100000.0, 1))
+
     def send_respawn(self):
         self.protocol.send_packet("respawn", self.protocol.buff_type.pack("iBq", 1, 0, 1),
                                   self.protocol.buff_type.pack_string("default"))
