@@ -1,4 +1,5 @@
 import glob
+import json
 import os
 import re
 import math
@@ -8,13 +9,14 @@ from quarry.types.buffer import Buffer
 
 class World:
 
-    def __init__(self, name: str, folder: str, version: str, env: dict, bounds: dict, spawn: str, portals: list):
+    def __init__(self, name: str, folder: str, version: str, contributors: list, env: dict, bounds: dict, spawn: str, portals: list):
         self.name = name
         self.time = env.get('time', 0)
         self.dimension = env.get('dimension', 'Overworld')
         self.weather = env.get('weather', 'clear')
         self.music = env.get('music', 'minecraft:music.end')
         self.cycle = env.get('cycle', False)
+        self.contributors = contributors
 
         self.packets = list()
         self.portals = list()
@@ -115,3 +117,26 @@ class World:
         pos2z = max(self.bounds['pos1'][2], self.bounds['pos2'][2])
 
         return pos1x <= x <= pos2x and pos1y <= y <= pos2y and pos1z <= z <= pos2z
+
+    def credit_json(self):
+        return json.dumps({
+            "text": "\"" + self.name + "\"\n",
+            "italic": True,
+            "color": "green",
+            "extra": [
+                {
+                    "text": "Created by ",
+                    "italic": False
+                },
+                {
+                    "text": ", ".join(self.contributors[0:-2]),
+                    "italic": False,
+                    "color": "yellow"
+                },
+                {
+                    "text": self.contributors[-1] if len(self.contributors) == 1 else "and " + self.contributors[-1],
+                    "italic": False,
+                    "color": "yellow"
+                }
+            ]
+        })

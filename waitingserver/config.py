@@ -29,6 +29,7 @@ def load_world_config():
 
         for w in config.get('worlds', list()):
             name = w.get('name', 'Untitled')
+            contributors = w.get('contributors', list())
             environment = w.get('environment', dict())
             portals = w.get('portals', list())
             folder = w.get('folder')
@@ -51,7 +52,7 @@ def load_world_config():
                 if worlds.get(version) is None:
                     worlds[version] = {}
 
-                world = World(name, folder, version, environment, bounds, spawn, portals)
+                world = World(name, folder, version, contributors, environment, bounds, spawn, portals)
                 logger.info('Loaded {} for version {}'.format(world.name, version))
 
                 if default == world.name:
