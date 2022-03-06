@@ -1,22 +1,14 @@
 import os
 
-from quarry.types.buffer import Buffer
-from quarry.types.nbt import TagCompound, TagRoot, TagString, TagList, NBTFile, TagInt
+from quarry.types.nbt import TagInt
 
 from waitingserver.versions import Version_1_17_1
-from waitingserver.versions.version import parent_folder
 
 
 class Version_1_18(Version_1_17_1):
     protocol_version = 757
     chunk_format = '1.18'
     tag_format = '1.18'
-
-    empty_chunk_buffer = Buffer(open(os.path.join(parent_folder, 'empty_chunk', chunk_format + '.bin'), 'rb').read())
-    empty_chunk_buffer.unpack("i")
-    empty_chunk_buffer.unpack("i")
-
-    empty_chunk = empty_chunk_buffer.read()
 
     def get_dimension_settings(self):
         settings = super().get_dimension_settings()
