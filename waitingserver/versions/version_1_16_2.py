@@ -46,7 +46,7 @@ class Version_1_16_2(Version_1_16):
         })
 
     def get_dimension_settings(self):
-        return {
+        settings = {
             'piglin_safe': TagByte(0),
             'natural': TagByte(1),
             'ambient_light': TagFloat(1.0),
@@ -60,8 +60,12 @@ class Version_1_16_2(Version_1_16):
             'coordinate_scale': TagFloat(1.0),
             'ultrawarm': TagByte(0),
             'has_ceiling': TagByte(0),
-            'fixed_time': TagInt(18000),
         }
+
+        if self.current_world.time is not None and self.current_world.cycle is False:
+            settings['fixed_time'] = TagInt(self.current_world.time)
+
+        return settings
 
     def send_join_game(self):
         self.init_dimension_codec()
