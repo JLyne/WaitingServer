@@ -31,7 +31,7 @@ class Version_1_18(Version_1_17_1):
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("q", 0),
                                   self.protocol.buff_type.pack_varint(0),
-                                  self.protocol.buff_type.pack_varint(32),
+                                  self.protocol.buff_type.pack_varint(7),
                                   self.protocol.buff_type.pack_varint(0),
                                   self.protocol.buff_type.pack("????", False, True, False, False))
 

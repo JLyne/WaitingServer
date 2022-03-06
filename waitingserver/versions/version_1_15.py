@@ -58,7 +58,7 @@ class Version_1_15(Version):
         self.protocol.send_packet("join_game",
                                   self.protocol.buff_type.pack("iBqiB", 0, 1, 0, 0, 0),
                                   self.protocol.buff_type.pack_string("default"),
-                                  self.protocol.buff_type.pack_varint(16),
+                                  self.protocol.buff_type.pack_varint(7),
                                   self.protocol.buff_type.pack("??", False, True))
 
     def send_spawn(self):

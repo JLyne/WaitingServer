@@ -80,7 +80,7 @@ class Version_1_16_2(Version_1_16):
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("q", 0),
                                   self.protocol.buff_type.pack_varint(0),
-                                  self.protocol.buff_type.pack_varint(32),
+                                  self.protocol.buff_type.pack_varint(7),
                                   self.protocol.buff_type.pack("????", False, True, False, False))
 
     def send_respawn(self):

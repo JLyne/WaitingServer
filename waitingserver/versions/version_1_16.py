@@ -43,7 +43,7 @@ class Version_1_16(Version_1_15):
                                   self.protocol.buff_type.pack_string("minecraft:overworld"),
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("qB", 0, 0),
-                                  self.protocol.buff_type.pack_varint(32),
+                                  self.protocol.buff_type.pack_varint(7),
                                   self.protocol.buff_type.pack("????", False, True, False, False))
 
     def send_respawn(self):
