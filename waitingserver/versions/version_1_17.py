@@ -26,7 +26,7 @@ class Version_1_17(Version_1_16_2):
 
         self.protocol.send_packet("player_position_and_look",
                                   self.protocol.buff_type.pack("dddff?",
-                                                               spawn.get('x'), spawn.get('y'), spawn.get('z'),
+                                                               spawn.get('x') + 0.5, spawn.get('y'), spawn.get('z') + 0.5,
                                                                spawn.get('yaw'), spawn.get('pitch'), 0b00000),
                                   self.protocol.buff_type.pack_varint(0), self.protocol.buff_type.pack("?", True))
 
