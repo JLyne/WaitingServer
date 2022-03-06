@@ -9,7 +9,8 @@ from quarry.types.buffer import Buffer
 
 class World:
 
-    def __init__(self, name: str, folder: str, version: str, contributors: list, env: dict, bounds: dict, spawn: str, portals: list):
+    def __init__(self, name: str, folder: str, version: str, contributors: list, env: dict, bounds: dict, spawn: str,
+				 portals: list):
         self.name = name
         self.time = env.get('time', 0)
         self.dimension = env.get('dimension', 'Overworld')
@@ -119,24 +120,31 @@ class World:
         return pos1x <= x <= pos2x and pos1y <= y <= pos2y and pos1z <= z <= pos2z
 
     def credit_json(self):
-        return json.dumps({
-            "text": "\"" + self.name + "\"\n",
-            "italic": True,
-            "color": "green",
-            "extra": [
-                {
-                    "text": "Created by ",
-                    "italic": False
-                },
-                {
-                    "text": ", ".join(self.contributors[0:-2]),
-                    "italic": False,
-                    "color": "yellow"
-                },
-                {
-                    "text": self.contributors[-1] if len(self.contributors) == 1 else "and " + self.contributors[-1],
-                    "italic": False,
-                    "color": "yellow"
-                }
-            ]
-        })
+		if len(self.contributors) > 0:
+			return json.dumps({
+				"text": "\"" + self.name + "\"\n",
+				"italic": True,
+				"color": "green",
+				"extra": [
+					{
+						"text": "Created by ",
+						"italic": False
+					},
+					{
+						"text": ", ".join(self.contributors[0:-2]),
+						"italic": False,
+						"color": "yellow"
+					},
+					{
+						"text": self.contributors[-1] if len(self.contributors) == 1 else "and " + self.contributors[
+							-1],
+						"italic": False,
+						"color": "yellow"
+					}
+				]})
+		else:
+			return json.dumps({
+				"text": "\"" + self.name + "\"\n",
+				"italic": True,
+				"color": "green",
+			})

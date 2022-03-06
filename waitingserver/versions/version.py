@@ -6,7 +6,8 @@ from pathlib import Path
 from quarry.types.buffer import Buffer
 
 from waitingserver.protocol import Protocol
-from waitingserver.config import get_default_world
+from waitingserver.config import get_default_world, worlds
+from waitingserver.voting import entry_json, entry_navigation_json
 
 parent_folder = Path(__file__).parent.parent
 
@@ -32,7 +33,10 @@ class Version(object, metaclass=abc.ABCMeta):
         self.protocol.ticker.add_loop(100, self.send_keep_alive)  # Keep alive packets
         self.protocol.ticker.add_loop(200, lambda: self.send_music(True))
 
-        self.current_world = get_default_world(self.chunk_format)
+        if self.protocol.voting_mode:
+            self.current_world = worlds[self.chunk_format][0]
+        else:
+            self.current_world = get_default_world(self.chunk_format)
 
         self.send_join_game()
         self.send_commands()
@@ -81,9 +85,12 @@ class Version(object, metaclass=abc.ABCMeta):
             if now - self.last_command < 2:
                 return
 
-            self.reset_world()
-        else:
-            return
+            self.reset_world(effects=True)
+        elif self.protocol.voting_mode is True:
+            if message == "/prev":
+                self.previous_world()
+            elif message == "/next":
+                self.next_world()
 
         self.last_command = time.time()
 
@@ -119,18 +126,49 @@ class Version(object, metaclass=abc.ABCMeta):
         else:
             self.send_time()
 
+        # Credits and entry navigation
+        if self.protocol.voting_mode:
+            self.send_chat_message(entry_json(
+                worlds[self.chunk_format].index(self.current_world) + 1,
+                len(worlds[self.chunk_format])))
+
+            self.send_chat_message(self.current_world.credit_json())
+
+            if not self.is_bedrock:
+                self.send_chat_message(entry_navigation_json(self.protocol.uuid, self.protocol.voting_secret))
+
     def spawn_player(self, effects=False):
         self.send_spawn()
 
         if effects is True:
             self.send_spawn_effect()
 
-    def reset_world(self):
+    def reset_world(self, effects=False):
         self.send_respawn()
 
         self.protocol.ticker.add_delay(1, self.send_world)
-        self.protocol.ticker.add_delay(2, self.send_reset_sound)
         self.protocol.ticker.add_delay(20, self.send_music)
+
+        if effects is True:
+            self.protocol.ticker.add_delay(2, self.send_reset_sound)
+
+    def next_world(self):
+        if len(worlds[self.chunk_format]) > 1:
+            index = worlds[self.chunk_format].index(self.current_world)
+            next_index = index + 1 if index < len(worlds[self.chunk_format]) - 1 else 0
+            self.current_world = worlds[self.chunk_format][next_index]
+
+        self.reset_world()
+        self.send_world()
+
+    def previous_world(self):
+        if len(worlds[self.chunk_format]) > 1:
+            index = worlds[self.chunk_format].index(self.current_world)
+            prev_index = index - 1 if index > 0 else len(worlds[self.chunk_format]) - 1
+            self.current_world = worlds[self.chunk_format][prev_index]
+
+        self.reset_world()
+        self.send_world()
 
     def send_tags(self):
         tag_packet = self.__class__.get_tag_packet()

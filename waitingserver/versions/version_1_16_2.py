@@ -84,6 +84,8 @@ class Version_1_16_2(Version_1_16):
                                   self.protocol.buff_type.pack("????", False, True, False, False))
 
     def send_respawn(self):
+        self.init_dimension_codec()
+
         self.protocol.send_packet("respawn",
                                   self.protocol.buff_type.pack_nbt(self.current_dimension),
                                   self.protocol.buff_type.pack_string("rtgame:reset"),

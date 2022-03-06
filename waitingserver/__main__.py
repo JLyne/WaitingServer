@@ -23,6 +23,8 @@ parser.add_argument("-a", "--host", default="127.0.0.1", help="bind address")
 parser.add_argument("-p", "--port", default=25567, type=int, help="bind port")
 parser.add_argument("-m", "--max", default=65535, type=int, help="player count")
 parser.add_argument("-r", "--metrics", default=None, type=int, help="expose prometheus metrics on specified port")
+parser.add_argument("-s", "--voting", type=str,
+                    help="Enables voting mode with the given secret. Shows entry counts and prev/next buttons.")
 parser.add_argument("-b", "--bungeecord", action='store_true', help="Enables bungeecord forwarding support")
 parser.add_argument("-v", "--velocity", default=None, type=str, help="enable velocity modern forwarding support with the given secret")
 
@@ -53,6 +55,8 @@ build_versions()
 if metrics_port is not None:
     init_prometheus(metrics_port)
 
+Protocol.voting_mode = args.voting is not None
+Protocol.voting_secret = args.voting
 Protocol.bungee_forwarding = args.bungeecord
 Protocol.velocity_forwarding = args.velocity is not None
 Protocol.velocity_forwarding_secret = args.velocity

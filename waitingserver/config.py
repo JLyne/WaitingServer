@@ -25,7 +25,6 @@ def load_world_config():
     with open(r'./config.yml') as file:
         config = yaml.load(file, Loader=SafeLoader)
         default = config.get('default-world', None)
-        default_exists = {}
 
         for w in config.get('worlds', list()):
             name = w.get('name', 'Untitled')
@@ -50,25 +49,23 @@ def load_world_config():
                 version = os.path.basename(os.path.normpath(subFolder))
 
                 if worlds.get(version) is None:
-                    worlds[version] = {}
+                    worlds[version] = []
 
                 world = World(name, folder, version, contributors, environment, bounds, spawn, portals)
                 logger.info('Loaded {} for version {}'.format(world.name, version))
 
                 if default == world.name:
-                    default_exists[version] = True
+                    default_world[version] = world
 
-                worlds[version][world.name] = world
+                worlds[version].append(world)
 
         for version in worlds:
             if len(worlds[version]) == 0:
                 logger.error('No worlds defined for {}'.format(str(version)))
                 exit(1)
 
-            if default_exists.get(version) is True:
-                default_world[version] = worlds[version][default]
-            else:
-                default_world[version] = next(iter(worlds[version].values()))
+            if default_world.get(version) is None:
+                default_world[version] = worlds[version][0]
 
 
 def get_worlds():
