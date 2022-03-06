@@ -191,6 +191,10 @@ class Version(object, metaclass=abc.ABCMeta):
         raise NotImplementedError('send_commands must be defined to use this base class')
 
     @abc.abstractmethod
+    def send_chat_message(self, message):
+        raise NotImplementedError('send_chat_message must be defined to use this base class')
+
+    @abc.abstractmethod
     def send_tablist(self):
         raise NotImplementedError('send_tablist must be defined to use this base class')
 

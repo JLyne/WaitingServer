@@ -1,4 +1,5 @@
 from quarry.types.nbt import TagList, TagCompound, TagRoot, TagString, TagByte, TagFloat, TagInt
+from quarry.types.uuid import UUID
 
 from waitingserver.versions import Version_1_15
 from waitingserver.protocol import Protocol
@@ -57,3 +58,9 @@ class Version_1_16(Version_1_15):
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("qBB", 0, 1, 1),
                                   self.protocol.buff_type.pack("???", False, False, True))
+
+    def send_chat_message(self, message):
+        self.protocol.send_packet('chat_message',
+                                  self.protocol.buff_type.pack_string(message),
+                                  self.protocol.buff_type.pack("b", 1),
+                                  self.protocol.buff_type.pack_uuid(UUID(int=0)))

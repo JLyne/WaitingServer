@@ -159,6 +159,11 @@ class Version_1_15(Version):
     def send_commands(self):
         self.protocol.send_packet('declare_commands', self.protocol.buff_type.pack_commands(self.commands))
 
+    def send_chat_message(self, message):
+        self.protocol.send_packet('chat_message',
+                                  self.protocol.buff_type.pack_string(message),
+                                  self.protocol.buff_type.pack("b", 1))
+
     def send_tablist(self):
         self.protocol.send_packet("player_list_header_footer",
                                   self.protocol.buff_type.pack_string(json.dumps({
