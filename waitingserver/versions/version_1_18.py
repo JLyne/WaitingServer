@@ -10,6 +10,7 @@ from waitingserver.versions.version import parent_folder
 class Version_1_18(Version_1_17_1):
     protocol_version = 757
     chunk_format = '1.18'
+    tag_format = '1.18'
 
     biomes = NBTFile(TagRoot({})).load(os.path.join(parent_folder, 'biomes', chunk_format + '.nbt'))
 

@@ -1,15 +1,22 @@
 import abc
+import os
 import time
 from pathlib import Path
+
+from quarry.types.buffer import Buffer
 
 from waitingserver.protocol import Protocol
 from waitingserver.config import get_default_world
 
 parent_folder = Path(__file__).parent.parent
 
+
 class Version(object, metaclass=abc.ABCMeta):
     protocol_version = None
     chunk_format = None
+    tag_format = None
+
+    tag_packet = None
 
     def __init__(self, protocol: Protocol, bedrock: False):
         self.protocol = protocol
@@ -29,6 +36,7 @@ class Version(object, metaclass=abc.ABCMeta):
 
         self.send_join_game()
         self.send_commands()
+        self.send_tags()
         self.send_world()
 
         if self.is_bedrock:  # Prevent geyser persisting previous server inventory
@@ -123,6 +131,20 @@ class Version(object, metaclass=abc.ABCMeta):
         self.protocol.ticker.add_delay(1, self.send_world)
         self.protocol.ticker.add_delay(2, self.send_reset_sound)
         self.protocol.ticker.add_delay(20, self.send_music)
+
+    def send_tags(self):
+        tag_packet = self.__class__.get_tag_packet()
+
+        if tag_packet is not None:
+            self.protocol.send_packet("tags", tag_packet)
+
+    @classmethod
+    def get_tag_packet(cls):
+        if cls.tag_packet is None:
+            cls.tag_packet = Buffer(open(os.path.join(parent_folder, 'tags', cls.tag_format + '.bin'),
+                             'rb').read()).read() if cls.tag_format is not None else None
+
+        return cls.tag_packet
 
     @abc.abstractmethod
     def send_join_game(self):
