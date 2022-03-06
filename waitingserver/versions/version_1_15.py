@@ -8,7 +8,6 @@ from waitingserver.protocol import Protocol
 class Version_1_15(Version):
     protocol_version = 578
     chunk_format = '1.15'
-    music = "minecraft:music.end"
 
     def __init__(self, protocol: Protocol, bedrock: False):
         super(Version_1_15, self).__init__(protocol, bedrock)
@@ -131,7 +130,7 @@ class Version_1_15(Version):
 
         if stop is False:
             self.protocol.send_packet("named_sound_effect",
-                                      self.protocol.buff_type.pack_string(self.music),
+                                      self.protocol.buff_type.pack_string(self.current_world.music),
                                       self.protocol.buff_type.pack_varint(2),
                                       self.protocol.buff_type.pack("iiiff",
                                                                    int(spawn.get('x')),

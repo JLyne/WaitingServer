@@ -13,6 +13,7 @@ class World:
         self.time = env.get('time', 0)
         self.dimension = env.get('dimension', 'Overworld')
         self.weather = env.get('weather', 'clear')
+        self.music = env.get('music', 'minecraft:music.end')
         self.cycle = env.get('cycle', False)
 
         self.packets = list()
