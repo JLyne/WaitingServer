@@ -1,4 +1,11 @@
 default-world: Waiting
+maps:
+- name: creative
+  width: 3
+- name: survival
+  width: 3
+- name: build
+  width: 3
 worlds:
 - name: Unsupported version
   folder: unsupported
@@ -27,6 +34,25 @@ worlds:
     - pos1: 3,30,-13
       pos2: 5,31,-11
       server: build
+  maps:
+    - name: creative
+      direction: north
+      pos: -3,35,-12
+    - name: creative
+      direction: south
+      pos: -5,35,-12
+    - name: survival
+      direction: north
+      pos: 1,35,-12
+    - name: survival
+      direction: south
+      pos: -1,35,-12
+    - name: build
+      direction: north
+      pos: 5,35,-12
+    - name: build
+      direction: south
+      pos: 3,35,-12
 - name: Waiting Winter
   folder: waiting_winter
   spawn: 0,32,0,180,0
