@@ -43,14 +43,14 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Package Application
-      uses: Dnawrkshp/pyinstaller-action@windows
+      uses: action-python/pyinstaller-py3.8@win64
       with:
         path: /github/workspace/waitingserver
         
     - name: copy file
       uses: canastro/copy-file-action@master
       with:
-        source: waitingserver/dist/windows/server.exe
+        source: waitingserver/dist/windows/win64/server.exe
         target: server.exe
 
     - uses: actions/upload-artifact@v2
