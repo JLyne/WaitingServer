@@ -9,18 +9,20 @@ from quarry.types.buffer import Buffer
 
 class World:
 
-	def __init__(self, name: str, folder: str, version: str, contributors: list, env: dict, bounds: dict, spawn: str,
-				 portals: list):
+	def __init__(self, name: str, folder: str, version: str, config: dict):
 		self.name = name
-		self.time = env.get('time', 0)
-		self.dimension = env.get('dimension', 'Overworld')
-		self.weather = env.get('weather', 'clear')
-		self.music = env.get('music', 'minecraft:music.end')
-		self.cycle = env.get('cycle', False)
-		self.contributors = contributors
 
-		self.packets = list()
-		self.portals = list()
+		environment = config.get('environment', dict())
+
+		self.time = int(environment.get('time', 0))
+		self.dimension = environment.get('dimension', 'Overworld')
+		self.weather = environment.get('weather', 'clear')
+		self.music = environment.get('music', 'minecraft:music.end')
+		self.cycle = environment.get('cycle', False)
+		self.contributors = config.get('contributors', list())
+
+		self.packets: list[WorldPacket] = []
+		self.portals: list[WorldPortal] = []
 		self.bounds = None
 		self.spawn = {"x": 0, "y": 0, "z": 0, "yaw": 0, "yaw_256": 0, "pitch": 0}
 
@@ -30,16 +32,12 @@ class World:
 			file = open(filename, 'rb')
 			packet_type = re.match(r'(\d+)(?:_dn)?_([a-z_]+)(_[\w-]*)?.bin', os.path.basename(filename))
 
-			self.packets.append({
-				"id": packet_type.group(1),
-				"type": packet_type.group(2),
-				"packet": Buffer(file.read()).read()
-			})
+			self.packets.append(WorldPacket(packet_type.group(1), packet_type.group(2), Buffer(file.read()).read()))
 			file.close()
 
 		parts = [0, 0, 0, 0, 0]
 
-		for i, part in enumerate(spawn.split(',')):
+		for i, part in enumerate(config.get('spawn').split(',')):
 			parts[i] = part
 
 			self.spawn = {
@@ -51,7 +49,7 @@ class World:
 				"pitch": int(float(parts[4])),
 			}
 
-		for portal in portals:
+		for portal in config.get('portals', list()):
 			pos1 = [0, 0, 0]
 			pos2 = [0, 0, 0]
 
@@ -61,13 +59,10 @@ class World:
 			for i, part in enumerate(portal.get('pos2', '').split(',')):
 				pos2[i] = math.floor(float(part))
 
-			self.portals.append({
-				"pos1": pos1,
-				"pos2": pos2,
-				"server": portal.get('server', None)
-			})
+			self.portals.append(WorldPortal(pos1, pos2, portal.get('server', None)))
 
-		if bounds is not None:
+		if 'bounds' in config:
+			bounds = config.get('bounds')
 			pos1 = [0, 0, 0]
 			pos2 = [0, 0, 0]
 
@@ -88,16 +83,16 @@ class World:
 		z = math.floor(z)
 
 		for portal in self.portals:
-			pos1x = min(portal['pos1'][0], portal['pos2'][0])
-			pos1y = min(portal['pos1'][1], portal['pos2'][1])
-			pos1z = min(portal['pos1'][2], portal['pos2'][2])
+			pos1x = min(portal.pos1[0], portal.pos2[0])
+			pos1y = min(portal.pos1[1], portal.pos2[1])
+			pos1z = min(portal.pos1[2], portal.pos2[2])
 
-			pos2x = max(portal['pos1'][0], portal['pos2'][0])
-			pos2y = max(portal['pos1'][1], portal['pos2'][1])
-			pos2z = max(portal['pos1'][2], portal['pos2'][2])
+			pos2x = max(portal.pos1[0], portal.pos2[0])
+			pos2y = max(portal.pos1[1], portal.pos2[1])
+			pos2z = max(portal.pos1[2], portal.pos2[2])
 
 			if pos1x <= x <= pos2x and pos1y <= y <= pos2y and pos1z <= z <= pos2z:
-				return portal['server']
+				return portal.destination
 
 		return None
 
@@ -148,3 +143,19 @@ class World:
 				"italic": True,
 				"color": "green",
 			})
+
+
+class WorldPortal:
+
+	def __init__(self, pos1: list[int], pos2: list[int], destination: str):
+		self.pos1 = pos1
+		self.pos2 = pos2
+		self.destination = destination
+
+
+class WorldPacket:
+
+	def __init__(self, id: int, type: str, data: Buffer):
+		self.id = id
+		self.type = type
+		self.data = data

@@ -116,7 +116,7 @@ class Version(object, metaclass=abc.ABCMeta):
 
         # Chunk packets
         for packet in self.current_world.packets:
-            self.protocol.send_packet(packet.get('type'), packet.get('packet'))
+            self.protocol.send_packet(packet.type, packet.data)
 
         # Start/stop rain as necessary
         self.send_weather(self.current_world.weather == 'rain')

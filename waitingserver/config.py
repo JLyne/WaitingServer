@@ -27,13 +27,12 @@ def load_world_config():
         default = config.get('default-world', None)
 
         for w in config.get('worlds', list()):
-            name = w.get('name', 'Untitled')
-            contributors = w.get('contributors', list())
-            environment = w.get('environment', dict())
-            portals = w.get('portals', list())
+            name = w.get('name')
             folder = w.get('folder')
-            bounds = w.get('bounds', None)
-            spawn = w.get('spawn', None)
+
+            if name is None:
+                logger.error('Skipping world with no defined name')
+                continue
 
             if folder is None:
                 logger.error('World %s has no folder defined. Skipped.', name)
@@ -51,7 +50,7 @@ def load_world_config():
                 if worlds.get(version) is None:
                     worlds[version] = []
 
-                world = World(name, folder, version, contributors, environment, bounds, spawn, portals)
+                world = World(name, folder, version, w)
                 logger.info('Loaded {} for version {}'.format(world.name, version))
 
                 if default == world.name:
