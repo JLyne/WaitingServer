@@ -6,6 +6,8 @@ import math
 
 from quarry.types.buffer import Buffer
 
+from waitingserver.direction import Direction
+
 
 class World:
 
@@ -23,6 +25,7 @@ class World:
 
 		self.packets: list[WorldPacket] = []
 		self.portals: list[WorldPortal] = []
+		self.maps: list[WorldMap] = []
 		self.bounds = None
 		self.spawn = {"x": 0, "y": 0, "z": 0, "yaw": 0, "yaw_256": 0, "pitch": 0}
 
@@ -60,6 +63,14 @@ class World:
 				pos2[i] = math.floor(float(part))
 
 			self.portals.append(WorldPortal(pos1, pos2, portal.get('server', None)))
+
+		for map in config.get('maps', list()):
+			pos = [0, 0, 0]
+
+			for i, part in enumerate(map.get('pos', '').split(',')):
+				pos[i] = float(part)
+
+			self.maps.append(WorldMap(map.get('name'), pos, Direction[map.get('direction', 'NORTH').upper()]))
 
 		if 'bounds' in config:
 			bounds = config.get('bounds')
@@ -143,6 +154,14 @@ class World:
 				"italic": True,
 				"color": "green",
 			})
+
+
+class WorldMap:
+
+	def __init__(self, map_name: str, pos: list[float], direction: Direction):
+		self.map_name = map_name
+		self.pos = pos
+		self.direction = direction
 
 
 class WorldPortal:

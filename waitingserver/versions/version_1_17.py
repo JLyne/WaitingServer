@@ -7,6 +7,9 @@ class Version_1_17(Version_1_16_2):
     protocol_version = 755
     chunk_format = '1.17'
     tag_format = '1.17'
+    map_format = '1.17'
+
+    map_item_id = 847
 
     def get_dimension_settings(self):
         settings = super().get_dimension_settings()

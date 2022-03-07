@@ -5,8 +5,10 @@ from pathlib import Path
 
 from quarry.types.buffer import Buffer
 
+from waitingserver.Map import Map, MapPart
+from waitingserver.direction import Direction
 from waitingserver.protocol import Protocol
-from waitingserver.config import get_default_world, worlds
+from waitingserver.config import get_default_world, worlds, maps
 from waitingserver.voting import entry_json, entry_navigation_json
 
 parent_folder = Path(__file__).parent.parent
@@ -16,8 +18,13 @@ class Version(object, metaclass=abc.ABCMeta):
     protocol_version = None
     chunk_format = None
     tag_format = None
+    map_format = None
 
     tag_packet = None
+
+    item_frame_id = None
+    map_item_id = None
+    last_entity_id = 1000
 
     def __init__(self, protocol: Protocol, bedrock: False):
         self.protocol = protocol
@@ -118,6 +125,8 @@ class Version(object, metaclass=abc.ABCMeta):
         for packet in self.current_world.packets:
             self.protocol.send_packet(packet.type, packet.data)
 
+        self.send_maps()
+
         # Start/stop rain as necessary
         self.send_weather(self.current_world.weather == 'rain')
 
@@ -136,6 +145,32 @@ class Version(object, metaclass=abc.ABCMeta):
 
             if not self.is_bedrock:
                 self.send_chat_message(entry_navigation_json(self.protocol.uuid, self.protocol.voting_secret))
+
+    def send_maps(self):
+        if self.map_format is None:
+            return
+
+        maps_to_send = set()
+
+        for world_map in self.current_world.maps:
+            if world_map.map_name not in maps[self.map_format]:
+                self.protocol.logger.info('Skipping spawn of unknown map {}'.format(world_map.map_name))
+                continue
+
+            map = maps[self.map_format][world_map.map_name]
+
+            for x in range(0, map.width):
+                for y in range(0, map.height):
+                    pos = Map.get_spawn_pos(world_map.pos, world_map.direction, x, y)
+
+                    self.send_map_frame(pos, world_map.direction, map.maps[(x * y) + x].map_id)
+
+            maps_to_send.add(map)
+
+        for map_to_send in maps_to_send:
+            for x in range(0, map_to_send.width):
+                for y in range(0, map_to_send.height):
+                    self.send_map_data(map_to_send.maps[(x * y) + x])
 
     def spawn_player(self, effects=False):
         self.send_spawn()
@@ -243,3 +278,11 @@ class Version(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def send_portal(self, server):
         raise NotImplementedError('send_portal must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_map_frame(self, pos: list[float], direction: Direction, map_id: int):
+        raise NotImplementedError('send_map_frame must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_map_data(self, part: MapPart):
+        raise NotImplementedError('send_map_data must be defined to use this base class')

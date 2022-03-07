@@ -1,6 +1,10 @@
 import json
 
-from quarry.types.nbt import TagRoot, TagCompound
+from quarry.types.nbt import TagRoot, TagCompound, TagInt
+from quarry.types.uuid import UUID
+
+from waitingserver.Map import MapPart
+from waitingserver.direction import Direction
 from waitingserver.versions import Version
 from waitingserver.protocol import Protocol
 
@@ -8,6 +12,10 @@ from waitingserver.protocol import Protocol
 class Version_1_15(Version):
     protocol_version = 578
     chunk_format = '1.15'
+    map_format = '1.12'
+
+    item_frame_id = 36
+    map_item_id = 671
 
     def __init__(self, protocol: Protocol, bedrock: False):
         super(Version_1_15, self).__init__(protocol, bedrock)
@@ -219,3 +227,46 @@ class Version_1_15(Version):
                                   self.protocol.buff_type.pack_string('bungeecord:main'),
                                   self.protocol.buff_type.pack(message_format, len(connect), connect, len(server),
                                                                server))
+
+    def send_map_frame(self, pos: list[float], direction: Direction, map_id: int):
+        self.protocol.send_packet("spawn_object",
+                                  self.protocol.buff_type.pack_varint(self.last_entity_id),  # Entity id
+                                  self.protocol.buff_type.pack_uuid(UUID.random()),  # Entity UUID
+                                  self.protocol.buff_type.pack_varint(self.item_frame_id),  # Item frame
+                                  self.protocol.buff_type.pack("dddbbihhh",
+                                                               pos[0], pos[1], pos[2],  # Position
+                                                               0, 0, int(direction),  # Rotation, facing
+                                                               0, 0, 0))  # Velocity
+
+        map_nbt = TagRoot({
+            '': TagCompound({
+                'map': TagInt(map_id)
+            })
+        })
+
+        self.protocol.send_packet("entity_metadata",
+                                  self.protocol.buff_type.pack_varint(self.last_entity_id),  # Entity id
+                                  self.protocol.buff_type.pack("B", 0),  # Index 0, entity flags
+                                  self.protocol.buff_type.pack_varint(0),  # Type byte
+                                  self.protocol.buff_type.pack_varint(0x20),  # Value 0x20 - Invisible
+                                  self.protocol.buff_type.pack("B", 8),  # Index 8, item frame item
+                                  self.protocol.buff_type.pack_varint(6),  # Type slot
+                                  self.protocol.buff_type.pack("?", True),  # Item exists
+                                  self.protocol.buff_type.pack_varint(self.map_item_id),  # Filled map item id
+                                  self.protocol.buff_type.pack("b", 1),  # Item count
+                                  self.protocol.buff_type.pack_nbt(map_nbt),
+                                  self.protocol.buff_type.pack("B", 0xff))  # End of packet
+
+        self.last_entity_id += 1
+
+    def send_map_data(self, part: MapPart):
+        data = [
+            self.protocol.buff_type.pack_varint(part.map_id),
+            self.protocol.buff_type.pack("b??BBBB", 0, True, False, 128, 128, 0, 0),
+            self.protocol.buff_type.pack_varint(len(part.data))
+        ]
+
+        for i in range(0, 16384):
+            data.append(self.protocol.buff_type.pack("B", part.data[i]))
+
+        self.protocol.send_packet("map", *data)

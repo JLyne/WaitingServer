@@ -5,6 +5,7 @@ import glob
 
 from yaml import SafeLoader
 
+from waitingserver.Map import Map
 from waitingserver.world import World
 from waitingserver.log import file_handler, console_handler
 import yaml
@@ -16,6 +17,7 @@ logger.setLevel(logging.DEBUG)
 
 worlds = {}
 default_world = {}
+maps = {}
 
 
 def load_world_config():
@@ -66,9 +68,34 @@ def load_world_config():
             if default_world.get(version) is None:
                 default_world[version] = worlds[version][0]
 
+        map_id = 0
 
-def get_worlds():
-    return worlds
+        for m in config.get('maps', list()):
+            name = m.get('name', None)
+            width = int(m.get('width', 1))
+            height = int(m.get('height', 1))
+
+            if name is None:
+                logger.error('Skipping map with no defined name')
+                continue
+
+            folder_path = os.path.join(os.getcwd(), './maps', name)
+
+            if os.path.exists(folder_path) is False:
+                logger.error('Folder for map %s does not exist. Skipped.', name)
+                continue
+
+            for subFolder in glob.glob(os.path.join(folder_path, '*/')):
+                version = os.path.basename(os.path.normpath(subFolder))
+
+                if maps.get(version) is None:
+                    maps[version] = {}
+
+                map = Map(name, version, width, height, map_id)
+                logger.info('Loaded map {} for version {}'.format(map.name, version))
+
+                maps[version][name] = map
+                map_id += (width * height)
 
 
 def get_default_world(version):
