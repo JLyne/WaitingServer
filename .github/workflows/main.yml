@@ -15,9 +15,9 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Package Application
-      uses: Dnawrkshp/pyinstaller-action@linux
+      uses: action-python/pyinstaller-py3.8@amd64
       with:
-        path: /github/workspace/waitingserver
+        path: waitingserver
         
     - name: copy file
       uses: canastro/copy-file-action@master
