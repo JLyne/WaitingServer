@@ -1,5 +1,3 @@
-import os
-
 from quarry.types.nbt import TagInt
 
 from waitingserver.versions import Version_1_17_1
