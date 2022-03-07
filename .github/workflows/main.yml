@@ -17,12 +17,12 @@ jobs:
     - name: Package Application
       uses: Dnawrkshp/pyinstaller-action@linux
       with:
-        path: waitingserver
+        path: /github/workspace/waitingserver
         
     - name: copy file
       uses: canastro/copy-file-action@master
       with:
-        source: waitingserver/dist/linux/server
+        source: /github/workspace/waitingserver/dist/linux/server
         target: server
 
     - uses: actions/upload-artifact@v2
@@ -44,12 +44,12 @@ jobs:
     - name: Package Application
       uses: Dnawrkshp/pyinstaller-action@windows
       with:
-        path: waitingserver
+        path: /github/workspace/waitingserver
         
     - name: copy file
       uses: canastro/copy-file-action@master
       with:
-        source: waitingserver/dist/windows/server.exe
+        source: /github/workspace/waitingserver/dist/windows/server.exe
         target: server.exe
 
     - uses: actions/upload-artifact@v2
