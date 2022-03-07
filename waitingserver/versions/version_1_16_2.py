@@ -9,6 +9,7 @@ from waitingserver.versions.version import parent_folder
 class Version_1_16_2(Version_1_16):
     protocol_version = 751
     chunk_format = '1.16.2'
+    biome_format = '1.16.2'
 
     biomes = None
 
@@ -101,7 +102,7 @@ class Version_1_16_2(Version_1_16):
     @classmethod
     def get_biomes(cls):
         if cls.biomes is None:
-            cls.biomes = NBTFile(TagRoot({})).load(os.path.join(parent_folder, 'biomes', cls.chunk_format + '.nbt'))
+            cls.biomes = NBTFile(TagRoot({})).load(os.path.join(parent_folder, 'biomes', cls.biome_format + '.nbt'))
 
         return cls.biomes
 

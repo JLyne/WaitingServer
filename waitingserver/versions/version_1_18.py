@@ -8,6 +8,7 @@ from waitingserver.versions import Version_1_17_1
 class Version_1_18(Version_1_17_1):
     protocol_version = 757
     chunk_format = '1.18'
+    biome_format = '1.18'
     tag_format = '1.18'
 
     def get_dimension_settings(self):
