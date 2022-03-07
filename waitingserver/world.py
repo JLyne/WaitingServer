@@ -5,6 +5,7 @@ import re
 import math
 
 from quarry.types.buffer import Buffer
+from typing import List
 
 from waitingserver.direction import Direction
 
@@ -23,9 +24,9 @@ class World:
 		self.cycle = environment.get('cycle', False)
 		self.contributors = config.get('contributors', list())
 
-		self.packets: list[WorldPacket] = []
-		self.portals: list[WorldPortal] = []
-		self.maps: list[WorldMap] = []
+		self.packets: List[WorldPacket] = []
+		self.portals: List[WorldPortal] = []
+		self.maps: List[WorldMap] = []
 		self.bounds = None
 		self.spawn = {"x": 0, "y": 0, "z": 0, "yaw": 0, "yaw_256": 0, "pitch": 0}
 
@@ -158,7 +159,7 @@ class World:
 
 class WorldMap:
 
-	def __init__(self, map_name: str, pos: list[float], direction: Direction):
+	def __init__(self, map_name: str, pos: List[float], direction: Direction):
 		self.map_name = map_name
 		self.pos = pos
 		self.direction = direction
@@ -166,7 +167,7 @@ class WorldMap:
 
 class WorldPortal:
 
-	def __init__(self, pos1: list[int], pos2: list[int], destination: str):
+	def __init__(self, pos1: List[int], pos2: List[int], destination: str):
 		self.pos1 = pos1
 		self.pos2 = pos2
 		self.destination = destination

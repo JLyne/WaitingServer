@@ -2,6 +2,7 @@ import json
 
 from quarry.types.nbt import TagRoot, TagCompound, TagInt
 from quarry.types.uuid import UUID
+from typing import List
 
 from waitingserver.Map import MapPart
 from waitingserver.direction import Direction
@@ -228,7 +229,7 @@ class Version_1_15(Version):
                                   self.protocol.buff_type.pack(message_format, len(connect), connect, len(server),
                                                                server))
 
-    def send_map_frame(self, pos: list[float], direction: Direction, map_id: int):
+    def send_map_frame(self, pos: List[float], direction: Direction, map_id: int):
         self.protocol.send_packet("spawn_object",
                                   self.protocol.buff_type.pack_varint(self.last_entity_id),  # Entity id
                                   self.protocol.buff_type.pack_uuid(UUID.random()),  # Entity UUID

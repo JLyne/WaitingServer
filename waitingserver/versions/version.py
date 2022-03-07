@@ -4,6 +4,7 @@ import time
 from pathlib import Path
 
 from quarry.types.buffer import Buffer
+from typing import List
 
 from waitingserver.Map import Map, MapPart
 from waitingserver.direction import Direction
@@ -280,7 +281,7 @@ class Version(object, metaclass=abc.ABCMeta):
         raise NotImplementedError('send_portal must be defined to use this base class')
 
     @abc.abstractmethod
-    def send_map_frame(self, pos: list[float], direction: Direction, map_id: int):
+    def send_map_frame(self, pos: List[float], direction: Direction, map_id: int):
         raise NotImplementedError('send_map_frame must be defined to use this base class')
 
     @abc.abstractmethod

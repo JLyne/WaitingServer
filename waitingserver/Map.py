@@ -1,6 +1,7 @@
 import os
 
 from quarry.types.nbt import TagRoot, NBTFile
+from typing import List
 
 from waitingserver.direction import Direction
 
@@ -12,7 +13,7 @@ class Map:
 		self.width = width
 		self.height = height
 
-		self.maps: list[MapPart] = list()
+		self.maps: List[MapPart] = list()
 
 		map_id = starting_id
 
@@ -30,7 +31,7 @@ class Map:
 				map_id += 1
 
 	@staticmethod
-	def get_spawn_pos(pos: list[float], direction: Direction, xoffset: int = 0, yoffset: int = 0):
+	def get_spawn_pos(pos: List[float], direction: Direction, xoffset: int = 0, yoffset: int = 0):
 		if direction == Direction.NORTH:
 			return [pos[0] + (0.5 - xoffset), pos[1] + (0.5 - yoffset), pos[2] - 0.03125]
 		elif direction == Direction.SOUTH:
