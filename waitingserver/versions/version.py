@@ -216,7 +216,6 @@ class Version(object, metaclass=abc.ABCMeta):
             self.current_world = worlds[self.chunk_format][next_index]
 
         self.reset_world()
-        self.send_world()
 
     def previous_world(self):
         if len(worlds[self.chunk_format]) > 1:
@@ -225,7 +224,6 @@ class Version(object, metaclass=abc.ABCMeta):
             self.current_world = worlds[self.chunk_format][prev_index]
 
         self.reset_world()
-        self.send_world()
 
     def send_tags(self):
         tag_packet = self.__class__.get_tag_packet()
