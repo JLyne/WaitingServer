@@ -26,6 +26,7 @@ parser.add_argument("-s", "--voting", type=str,
                     help="Enables voting mode with the given secret. Shows entry counts and prev/next buttons.")
 parser.add_argument("-b", "--bungeecord", action='store_true', help="Enables bungeecord forwarding support")
 parser.add_argument("-v", "--velocity", default=None, type=str, help="enable velocity modern forwarding support with the given secret")
+parser.add_argument("-d", "--debug", action='store_true', help="Shows debug markers for maps spawns and portals in the current world")
 
 args = parser.parse_args()
 
@@ -54,6 +55,7 @@ build_versions()
 if metrics_port is not None:
     init_prometheus(metrics_port)
 
+Protocol.debug_mode = args.debug
 Protocol.voting_mode = args.voting is not None
 Protocol.voting_secret = args.voting
 Protocol.bungee_forwarding = args.bungeecord

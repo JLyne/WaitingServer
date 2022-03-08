@@ -271,3 +271,22 @@ class Version_1_15(Version):
             data.append(self.protocol.buff_type.pack("B", part.data[i]))
 
         self.protocol.send_packet("map", *data)
+
+    def send_debug_marker(self, pos: List[int], name: str, r: int, g: int, b: int):
+        encoded_color = 0
+        encoded_color = encoded_color | b
+        encoded_color = encoded_color | (g << 8)
+        encoded_color = encoded_color | (r << 16)
+        encoded_color = encoded_color | (255 << 24)
+
+        self.protocol.logger.info(encoded_color)
+        self.protocol.send_packet("plugin_message",
+                                  self.protocol.buff_type.pack_string("minecraft:debug/game_test_add_marker"),
+                                  self.protocol.buff_type.pack_position(pos[0], pos[1], pos[2]),
+                                  self.protocol.buff_type.pack("I", encoded_color),
+                                  self.protocol.buff_type.pack_string(name),
+                                  self.protocol.buff_type.pack("i", 2147483647))
+
+    def clear_debug_markers(self):
+        self.protocol.send_packet("plugin_message",
+                                  self.protocol.buff_type.pack_string("minecraft:debug/game_test_clear"))

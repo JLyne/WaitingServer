@@ -1,4 +1,5 @@
 import abc
+import math
 import os
 import time
 from pathlib import Path
@@ -128,6 +129,9 @@ class Version(object, metaclass=abc.ABCMeta):
 
         self.send_maps()
 
+        if self.protocol.debug_mode:
+            self.send_debug_markers()
+
         # Start/stop rain as necessary
         self.send_weather(self.current_world.weather == 'rain')
 
@@ -166,12 +170,26 @@ class Version(object, metaclass=abc.ABCMeta):
 
                     self.send_map_frame(pos, world_map.direction, map.maps[(x * y) + x].map_id)
 
+                    if self.protocol.debug_mode:
+                        self.send_debug_marker([math.floor(pos[0]), math.floor(pos[1]), math.floor(pos[2])],
+                                               "{} map".format(world_map.map_name), 0, 125, 0)
+
             maps_to_send.add(map)
 
         for map_to_send in maps_to_send:
             for x in range(0, map_to_send.width):
                 for y in range(0, map_to_send.height):
                     self.send_map_data(map_to_send.maps[(x * y) + x])
+
+    def send_debug_markers(self):
+        spawn = self.current_world.spawn
+        self.send_debug_marker([int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z'))], 'Spawn', 0, 100, 0)
+
+        for portal in self.current_world.portals:
+            for x in range(portal.pos1[0], portal.pos2[0] + 1):
+                for y in range(portal.pos1[1], portal.pos2[1] + 1):
+                    for z in range(portal.pos1[2], portal.pos2[2] + 1):
+                        self.send_debug_marker([x, y, z], 'Portal to {}'.format(portal.destination), 0, 150, 0)
 
     def spawn_player(self, effects=False):
         self.send_spawn()
@@ -180,6 +198,9 @@ class Version(object, metaclass=abc.ABCMeta):
             self.send_spawn_effect()
 
     def reset_world(self, effects=False):
+        if self.protocol.debug_mode:
+            self.clear_debug_markers()
+
         self.send_respawn()
 
         self.protocol.ticker.add_delay(1, self.send_world)
@@ -287,3 +308,11 @@ class Version(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def send_map_data(self, part: MapPart):
         raise NotImplementedError('send_map_data must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_debug_marker(self, pos: List[int], name: str, r: int, g: int, b: int):
+        raise NotImplementedError('send_debug_marker must be defined to use this base class')
+
+    @abc.abstractmethod
+    def clear_debug_markers(self):
+        raise NotImplementedError('clear_debug_markers must be defined to use this base class')

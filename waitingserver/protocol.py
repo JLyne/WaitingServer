@@ -19,6 +19,7 @@ class Protocol(ServerProtocol):
     velocity_forwarding_secret = None
     voting_mode = False
     voting_secret = None
+    debug_mode = False
 
     def __init__(self, factory, remote_addr):
         super(Protocol, self).__init__(factory, remote_addr)
