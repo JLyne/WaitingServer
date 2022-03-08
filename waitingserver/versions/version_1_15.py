@@ -279,7 +279,6 @@ class Version_1_15(Version):
         encoded_color = encoded_color | (r << 16)
         encoded_color = encoded_color | (255 << 24)
 
-        self.protocol.logger.info(encoded_color)
         self.protocol.send_packet("plugin_message",
                                   self.protocol.buff_type.pack_string("minecraft:debug/game_test_add_marker"),
                                   self.protocol.buff_type.pack_position(pos[0], pos[1], pos[2]),
