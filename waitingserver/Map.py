@@ -37,9 +37,9 @@ class Map:
 		elif direction == Direction.SOUTH:
 			return [pos[0] + (0.5 + xoffset), pos[1] + (0.5 - yoffset), pos[2] + 1.03125]
 		elif direction == Direction.WEST:
-			return [pos[0] - 0.03125, pos[1] + (0.5 - yoffset), pos[2] + (0.5 - xoffset)]
+			return [pos[0] - 0.03125, pos[1] + (0.5 - yoffset), pos[2] + (0.5 + xoffset)]
 		elif direction == Direction.EAST:
-			return [pos[0] + 1.03125, pos[1] + (0.5 - yoffset), pos[2] + (0.5 + xoffset)]
+			return [pos[0] + 1.03125, pos[1] + (0.5 - yoffset), pos[2] + (0.5 - xoffset)]
 		elif direction == Direction.BOTTOM:
 			return [pos[0] + (0.5 + xoffset), pos[1] - 0.03125, pos[2] + (0.5 - yoffset)]
 		elif direction == Direction.TOP:
