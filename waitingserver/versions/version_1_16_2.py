@@ -25,7 +25,7 @@ class Version_1_16_2(Version_1_16):
         self.dimension_settings = self.get_dimension_settings()
 
         self.dimension = {
-            'name': TagString("minecraft:overworld"),
+            'name': TagString("minecraft:{}".format(self.current_world.dimension)),
             'id': TagInt(0),
             'element': TagCompound(self.dimension_settings),
         }
@@ -51,11 +51,11 @@ class Version_1_16_2(Version_1_16):
             'piglin_safe': TagByte(0),
             'natural': TagByte(1),
             'ambient_light': TagFloat(0.0),
-            'infiniburn': TagString("minecraft:infiniburn_overworld"),
+            'infiniburn': TagString("minecraft:infiniburn_{}".format(self.current_world.dimension)),
             'respawn_anchor_works': TagByte(0),
             'has_skylight': TagByte(1),
             'bed_works': TagByte(0),
-            "effects": TagString("minecraft:overworld"),
+            "effects": TagString("minecraft:{}".format(self.current_world.dimension)),
             'has_raids': TagByte(0),
             'logical_height': TagInt(256),
             'coordinate_scale': TagFloat(1.0),
