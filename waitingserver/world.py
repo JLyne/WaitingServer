@@ -138,12 +138,12 @@ class World:
 						"italic": False
 					},
 					{
-						"text": ", ".join(self.contributors[0:-2]),
+						"text": ", ".join(self.contributors[:-1]),
 						"italic": False,
 						"color": "yellow"
 					},
 					{
-						"text": self.contributors[-1] if len(self.contributors) == 1 else "and " + self.contributors[
+						"text": self.contributors[-1] if len(self.contributors) == 1 else " and " + self.contributors[
 							-1],
 						"italic": False,
 						"color": "yellow"
