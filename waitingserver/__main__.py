@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from quarry.net.server import ServerFactory
 from twisted.internet import reactor
 
-from waitingserver.config import load_world_config
+from waitingserver.config import load_config
 from waitingserver.log import logger
 from waitingserver.prometheus import init_prometheus
 from waitingserver.protocol import Protocol, build_versions
@@ -48,19 +48,22 @@ server_factory.max_players = args.max
 server_factory.motd = "Waiting Server"
 server_factory.online_mode = False
 server_factory.compression_threshold = 1500
+server_factory.server_statuses = dict()
 
-load_world_config()
+load_config()
 build_versions()
 
 if metrics_port is not None:
     init_prometheus(metrics_port)
 
+import waitingserver.config
 Protocol.debug_mode = args.debug
 Protocol.voting_mode = args.voting is not None
 Protocol.voting_secret = args.voting
 Protocol.bungee_forwarding = args.bungeecord
 Protocol.velocity_forwarding = args.velocity is not None
 Protocol.velocity_forwarding_secret = args.velocity
+Protocol.status_secret = waitingserver.config.status_secret
 
 server_factory.listen(args.host, args.port)
 logger.info('Server started')

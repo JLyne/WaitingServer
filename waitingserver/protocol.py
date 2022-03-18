@@ -1,4 +1,5 @@
 import hmac
+import json
 import random
 from copy import deepcopy
 
@@ -17,8 +18,11 @@ class Protocol(ServerProtocol):
     bungee_forwarding = False
     velocity_forwarding = False
     velocity_forwarding_secret = None
+
     voting_mode = False
     voting_secret = None
+    status_secret = None
+
     debug_mode = False
 
     def __init__(self, factory, remote_addr):
@@ -175,9 +179,36 @@ class Protocol(ServerProtocol):
     def packet_chat_message(self, buff):
         self.version.packet_chat_message(buff)
 
+    def packet_plugin_message(self, buff):
+        channel = buff.unpack_string()
+        data = buff.read()
+
+        if channel != "serverstatus:status":
+            return
+
+        if self.status_secret is None:
+            self.logger.warn("Ignoring status plugin message as no status secret is configured")
+            return
+
+        payload = json.loads(data.decode(encoding="utf-8"))
+        payload_hmac = payload.get("hmac")
+
+        msg = payload.get("servers", dict())
+        calculated_hmac = hmac.new(key=str.encode(self.status_secret, encoding="utf-8"),
+                                   msg=str.encode(msg, encoding="utf-8"), digestmod="sha512")
+
+        if calculated_hmac.hexdigest() != payload_hmac:
+            self.logger.warn("Failed to validate status plugin message. Is the status secret configured correctly?")
+            return
+
+        self.factory.server_statuses = json.loads(msg)
+
+        for player in self.factory.players:
+            player.version.send_status_hologram_texts()
+
 
 # Build dictionary of protocol version -> version class
-# Local import to prevent circlular import issues
+# Local import to prevent circular import issues
 def build_versions():
     import waitingserver.versions
 

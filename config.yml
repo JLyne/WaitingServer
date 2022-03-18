@@ -1,4 +1,5 @@
 default-world: Waiting
+status-secret: ''
 maps:
 - name: creative
   width: 3
@@ -53,6 +54,13 @@ worlds:
     - name: build
       direction: south
       pos: 3,35,-12
+  status-holograms:
+    - server: creative
+      pos: -4,34,-11
+    - server: survival
+      pos: 0,34,-11
+    - server: build
+      pos: 4,34,-11
 - name: Waiting Winter
   folder: waiting_winter
   spawn: 0,32,0,180,0

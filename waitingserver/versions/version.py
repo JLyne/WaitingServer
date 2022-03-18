@@ -2,6 +2,7 @@ import abc
 import math
 import os
 import time
+from copy import deepcopy
 from pathlib import Path
 
 from quarry.types.buffer import Buffer
@@ -27,6 +28,8 @@ class Version(object, metaclass=abc.ABCMeta):
     item_frame_id = None
     map_item_id = None
     last_entity_id = 1000
+
+    status_holograms = dict()
 
     def __init__(self, protocol: Protocol, bedrock: False):
         self.protocol = protocol
@@ -128,6 +131,8 @@ class Version(object, metaclass=abc.ABCMeta):
             self.protocol.send_packet(packet.type, packet.data)
 
         self.send_maps()
+        self.send_status_holograms()
+        self.send_status_hologram_texts()
 
         if self.protocol.debug_mode:
             self.send_debug_markers()
@@ -181,6 +186,34 @@ class Version(object, metaclass=abc.ABCMeta):
                 for y in range(0, map_to_send.height):
                     self.send_map_data(map_to_send.maps[(x * y) + x])
 
+    def send_status_holograms(self):
+        for hologram in self.current_world.holograms:
+            if self.status_holograms.get(hologram.server) is None:
+                self.status_holograms[hologram.server] = []
+
+            lines = self.protocol.factory.server_statuses.get(hologram.server, None)
+            holograms = []
+            pos = deepcopy(hologram.pos)
+
+            pos[0] += 0.5
+            pos[1] -= 2.0
+            pos[2] += 0.5
+
+            holograms.append(self.send_status_hologram(pos))
+            pos[1] -= 0.3
+            holograms.append(self.send_status_hologram(pos))
+
+            self.status_holograms[hologram.server].append(holograms)
+
+    def send_status_hologram_texts(self):
+        for server, holograms in self.status_holograms.items():
+            lines = self.protocol.factory.server_statuses.get(server, dict()).get('lines', None)
+
+            if lines is not None:
+                for hologram in holograms:
+                    self.send_status_hologram_text(hologram[0], lines[0])
+                    self.send_status_hologram_text(hologram[1], lines[1])
+
     def send_debug_markers(self):
         spawn = self.current_world.spawn
         self.send_debug_marker([int(spawn.get('x')), int(spawn.get('y')), int(spawn.get('z'))], 'Spawn', 0, 100, 0)
@@ -201,6 +234,7 @@ class Version(object, metaclass=abc.ABCMeta):
         if self.protocol.debug_mode:
             self.clear_debug_markers()
 
+        self.status_holograms = dict()
         self.send_respawn()
 
         self.protocol.ticker.add_delay(1, self.send_world)
@@ -306,6 +340,14 @@ class Version(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def send_map_data(self, part: MapPart):
         raise NotImplementedError('send_map_data must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_status_hologram(self, pos: List[float]):
+        raise NotImplementedError('send_status_hologram must be defined to use this base class')
+
+    @abc.abstractmethod
+    def send_status_hologram_text(self, entity_id: int, text: str):
+        raise NotImplementedError('send_status_hologram_text must be defined to use this base class')
 
     @abc.abstractmethod
     def send_debug_marker(self, pos: List[int], name: str, r: int, g: int, b: int):

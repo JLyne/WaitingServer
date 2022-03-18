@@ -18,15 +18,21 @@ logger.setLevel(logging.DEBUG)
 worlds = {}
 default_world = {}
 maps = {}
+status_secret = None
 
 
-def load_world_config():
+def load_config():
     global default_world
     global worlds
+    global status_secret
 
     with open(r'./config.yml') as file:
         config = yaml.load(file, Loader=SafeLoader)
         default = config.get('default-world', None)
+        status_secret = config.get('status-secret', None)
+
+        if not len(status_secret):
+            status_secret = None
 
         for w in config.get('worlds', list()):
             name = w.get('name')

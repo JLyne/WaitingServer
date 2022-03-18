@@ -27,6 +27,7 @@ class World:
 		self.packets: List[WorldPacket] = []
 		self.portals: List[WorldPortal] = []
 		self.maps: List[WorldMap] = []
+		self.holograms: List[WorldStatusHologram] = []
 		self.bounds = None
 		self.spawn = {"x": 0, "y": 0, "z": 0, "yaw": 0, "yaw_256": 0, "pitch": 0}
 
@@ -72,6 +73,14 @@ class World:
 				pos[i] = float(part)
 
 			self.maps.append(WorldMap(map.get('name'), pos, Direction[map.get('direction', 'NORTH').upper()]))
+
+		for hologram in config.get('status-holograms', list()):
+			pos = [0.0, 0.0, 0.0]
+
+			for i, part in enumerate(hologram.get('pos', '').split(',')):
+				pos[i] = float(part)
+
+			self.holograms.append(WorldStatusHologram(hologram.get('server'), pos))
 
 		if 'bounds' in config:
 			bounds = config.get('bounds')
@@ -171,6 +180,13 @@ class WorldPortal:
 		self.pos1 = pos1
 		self.pos2 = pos2
 		self.destination = destination
+
+
+class WorldStatusHologram:
+
+	def __init__(self, server: str, pos: List[float]):
+		self.server = server
+		self.pos = pos
 
 
 class WorldPacket:

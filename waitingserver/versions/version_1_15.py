@@ -15,6 +15,7 @@ class Version_1_15(Version):
     chunk_format = '1.15'
     map_format = '1.12'
 
+    armor_stand_id = 1
     item_frame_id = 36
     map_item_id = 671
 
@@ -271,6 +272,42 @@ class Version_1_15(Version):
             data.append(self.protocol.buff_type.pack("B", part.data[i]))
 
         self.protocol.send_packet("map", *data)
+
+    def send_status_hologram(self, pos: List[float]):
+        entity_id = self.last_entity_id
+        self.protocol.send_packet("spawn_mob",
+                                  self.protocol.buff_type.pack_varint(self.last_entity_id),  # Entity id
+                                  self.protocol.buff_type.pack_uuid(UUID.random()),  # Entity UUID
+                                  self.protocol.buff_type.pack_varint(self.armor_stand_id),  # Item frame
+                                  self.protocol.buff_type.pack("dddbbbhhh",
+                                                               pos[0], pos[1], pos[2],  # Position
+                                                               0, 0, 0,  # Rotation, head facing
+                                                               0, 0, 0))  # Velocity
+
+        self.protocol.send_packet("entity_metadata",
+                                  self.protocol.buff_type.pack_varint(entity_id),  # Entity id
+                                  self.protocol.buff_type.pack("B", 0),  # Index 0, entity flags
+                                  self.protocol.buff_type.pack_varint(0),  # Type byte
+                                  self.protocol.buff_type.pack_varint(0x20),  # Value 0x20 - Invisible
+                                  self.protocol.buff_type.pack("B", 5),  # Index 5, Has no gravity
+                                  self.protocol.buff_type.pack_varint(7),  # Type boolean
+                                  self.protocol.buff_type.pack("?", True),  # No gravity
+                                  self.protocol.buff_type.pack("B", 0xff))  # End of packet
+
+        self.last_entity_id += 1
+        return entity_id
+
+    def send_status_hologram_text(self, entity_id: int, text: str):
+        self.protocol.send_packet("entity_metadata",
+                                  self.protocol.buff_type.pack_varint(entity_id),  # Entity id
+                                  self.protocol.buff_type.pack("B", 2),  # Index 2, Custom name
+                                  self.protocol.buff_type.pack_varint(5),  # Type (boolean + chat)
+                                  self.protocol.buff_type.pack("?", True),  # Has custom name
+                                  self.protocol.buff_type.pack_string(text),  # The custom name
+                                  self.protocol.buff_type.pack("B", 3),  # Index 3, Custom name visible
+                                  self.protocol.buff_type.pack_varint(7),  # Type boolean
+                                  self.protocol.buff_type.pack("?", True),  # Custom name visible
+                                  self.protocol.buff_type.pack("B", 0xff))  # End of packet
 
     def send_debug_marker(self, pos: List[int], name: str, r: int, g: int, b: int):
         encoded_color = 0
