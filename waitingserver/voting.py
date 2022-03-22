@@ -23,8 +23,10 @@ def entry_json(current, total):
 
 
 def entry_navigation_json(uuid: UUID, secret):
+    from waitingserver.config import voting_url
+
     token = hmac.new(key=str.encode(secret), msg=uuid.to_bytes(), digestmod="sha256")
-    url = 'https://minecraft.rtgame.co.uk/detailing/?uuid={}&token={}'.format(uuid.to_hex(False), token.hexdigest())
+    url = voting_url.format(uuid=uuid.to_hex(False), token=token.hexdigest())
 
     return json.dumps({
             "text": "\n",

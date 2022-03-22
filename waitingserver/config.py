@@ -19,17 +19,20 @@ worlds = {}
 default_world = {}
 maps = {}
 status_secret = None
+voting_url = None
 
 
 def load_config():
     global default_world
     global worlds
     global status_secret
+    global voting_url
 
     with open(r'./config.yml') as file:
         config = yaml.load(file, Loader=SafeLoader)
         default = config.get('default-world', None)
         status_secret = config.get('status-secret', None)
+        voting_url = config.get('voting-url', None)
 
         if not len(status_secret):
             status_secret = None

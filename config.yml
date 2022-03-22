@@ -1,5 +1,6 @@
 default-world: Waiting
 status-secret: ''
+voting-url: ''
 maps:
 - name: creative
   width: 3
