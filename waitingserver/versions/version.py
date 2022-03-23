@@ -120,8 +120,6 @@ class Version(object, metaclass=abc.ABCMeta):
             self.send_portal(server)
 
     def send_world(self):
-        self.spawn_player()
-
         # Clear geyser chunk cache from previous server
         if self.is_bedrock:
             self.send_reset_world()
@@ -130,6 +128,7 @@ class Version(object, metaclass=abc.ABCMeta):
         for packet in self.current_world.packets:
             self.protocol.send_packet(packet.type, packet.data)
 
+        self.spawn_player()
         self.send_maps()
         self.send_status_holograms()
         self.send_status_hologram_texts()
