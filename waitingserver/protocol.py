@@ -204,7 +204,8 @@ class Protocol(ServerProtocol):
         self.factory.server_statuses = json.loads(msg)
 
         for player in self.factory.players:
-            player.version.send_status_hologram_texts()
+            if player.protocol_mode == "play":
+                player.version.send_status_hologram_texts()
 
 
 # Build dictionary of protocol version -> version class

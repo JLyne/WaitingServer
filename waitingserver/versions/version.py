@@ -197,7 +197,6 @@ class Version(object, metaclass=abc.ABCMeta):
             if self.status_holograms.get(hologram.server) is None:
                 self.status_holograms[hologram.server] = []
 
-            lines = self.protocol.factory.server_statuses.get(hologram.server, None)
             holograms = []
             pos = deepcopy(hologram.pos)
 
