@@ -1,4 +1,4 @@
-default-world: Waiting
+default-world: Harristown Forest
 status-secret: ''
 voting-url: ''
 maps:
@@ -81,6 +81,64 @@ worlds:
     - pos1: 3,30,-14
       pos2: 5,31,-12
       server: build
-
-
+- name: Harristown Forest
+  contributors:
+    - Jimbus Khan
+    - _ColdDestroy_
+    - ICommitTaxEvade
+    - Aerrro
+    - TicTacTin
+    - Personman6000
+  folder: entry14
+  spawn: 8,33,-5,0,0
+  environment:
+    time: 23200
+  bounds:
+    pos1: 79,255,79
+    pos2: -64,0,-64
+  portals:
+    - pos1: 11,32,7
+      pos2: 13,32,9
+      server: creative
+    - pos1: 7,32,7
+      pos2: 9,32,9
+      server: survival
+    - pos1: 3,32,7
+      pos2: 5,32,9
+      server: build
+  maps:
+    - name: creative
+      direction: north
+      pos: 13,36,8
+    - name: creative
+      direction: south
+      pos: 11,36,8
+    - name: creative
+      direction: bottom
+      pos: 11,32,8
+    - name: survival
+      direction: north
+      pos: 9,36,8
+    - name: survival
+      direction: south
+      pos: 7,36,8
+    - name: survival
+      direction: bottom
+      pos: 7,32,8
+    - name: build
+      direction: north
+      pos: 5,36,8
+    - name: build
+      direction: south
+      pos: 3,36,8
+    - name: build
+      direction: bottom
+      pos: 3,32,8
+  status-holograms:
+    - server: creative
+      pos: 12,34.5,7
+    - server: survival
+      pos: 8,35,7
+    - server: build
+      pos: 4,34.5,7
 
