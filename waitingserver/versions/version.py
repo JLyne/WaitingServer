@@ -98,6 +98,13 @@ class Version(object, metaclass=abc.ABCMeta):
                 return
 
             self.reset_world(effects=True)
+
+        elif message == "/credits":
+            if now - self.last_command < 0.5:
+                return
+
+            self.send_chat_message(self.current_world.credit_json())
+
         elif self.protocol.voting_mode is True:
             if message == "/prev":
                 self.previous_world()

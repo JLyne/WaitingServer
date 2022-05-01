@@ -61,6 +61,14 @@ class Version_1_15(Version):
                     "children": dict(),
                     "suggestions": None
                 },
+                "credits": {
+                    "type": "literal",
+                    "name": "credits",
+                    "executable": True,
+                    "redirect": None,
+                    "children": dict(),
+                    "suggestions": None
+                },
             }
         }
 
