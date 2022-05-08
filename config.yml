@@ -1,4 +1,4 @@
-default-world: Harristown Forest
+default-world: RTManor
 status-secret: ''
 voting-url: ''
 maps:
@@ -141,4 +141,50 @@ worlds:
       pos: 8,35,7
     - server: build
       pos: 4,34.5,7
+- name: RTManor
+  contributors:
+    - Senor_Kevin
+  folder: entry6
+  spawn: -22,35,-64,0,0
+  environment:
+    time: 3853
+  bounds:
+    pos1: 79,255,79
+    pos2: -64,0,-64
+  portals:
+    - pos1: -19,35,-57
+      pos2: -17,35,-55
+      server: creative
+    - pos1: -23,35,-57
+      pos2: -21,35,-55
+      server: survival
+    - pos1: -27,35,-57
+      pos2: -25,35,-55
+      server: build
+  maps:
+    - name: creative
+      direction: north
+      pos: -17,40,-56
+    - name: creative
+      direction: south
+      pos: -19,40,-56
+    - name: survival
+      direction: north
+      pos: -21,40,-56
+    - name: survival
+      direction: south
+      pos: -23,40,-56
+    - name: build
+      direction: north
+      pos: -25,40,-56
+    - name: build
+      direction: south
+      pos: -27,40,-56
+  status-holograms:
+    - server: creative
+      pos: -18,37.5,-57
+    - server: survival
+      pos: -22,38,-57
+    - server: build
+      pos: -26,37.5,-57
 
