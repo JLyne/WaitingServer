@@ -1,4 +1,4 @@
-default-world: RTManor
+default-world: CrispFriedHannah's Entry
 status-secret: ''
 voting-url: ''
 maps:
@@ -187,4 +187,51 @@ worlds:
       pos: -22,38,-57
     - server: build
       pos: -26,37.5,-57
-
+- name: CrispFriedHannah's Entry
+  contributors:
+    - CrispFriedHannah
+  folder: entry24
+  spawn: 8,33,-2,0,0
+  environment:
+    time: 3853
+    #music: 'minecraft:music_disc.cat'
+    weather: rain
+  bounds:
+    pos1: 79,255,79
+    pos2: -64,0,-64
+  portals:
+    - pos1: 11,32,7
+      pos2: 13,32,9
+      server: creative
+    - pos1: 7,32,7
+      pos2: 9,32,9
+      server: survival
+    - pos1: 3,32,7
+      pos2: 5,32,9
+      server: build
+  maps:
+    - name: creative
+      direction: north
+      pos: 13,36,8
+    - name: creative
+      direction: south
+      pos: 11,36,8
+    - name: survival
+      direction: north
+      pos: 9,36,8
+    - name: survival
+      direction: south
+      pos: 7,36,8
+    - name: build
+      direction: north
+      pos: 5,36,8
+    - name: build
+      direction: south
+      pos: 3,36,8
+  status-holograms:
+    - server: creative
+      pos: 12,34.5,7
+    - server: survival
+      pos: 8,35,7
+    - server: build
+      pos: 4,34.5,7
