@@ -1,4 +1,4 @@
-default-world: CrispFriedHannah's Entry
+default-world: Library
 status-secret: ''
 voting-url: ''
 maps:
@@ -235,3 +235,42 @@ worlds:
       pos: 8,35,7
     - server: build
       pos: 4,34.5,7
+- name: Library
+  contributors:
+    - Tklots
+  folder: entry11
+  spawn: 9,33,-4,0,0
+  environment:
+    dimension: the_end
+    time: 2400
+    music: 'minecraft:music_disc.mall'
+  bounds:
+    pos1: 79,255,79
+    pos2: -64,0,-64
+  portals:
+    - pos1: 15,33,9
+      pos2: 17,36,9
+      server: creative
+    - pos1: 8,33,9
+      pos2: 10,36,9
+      server: survival
+    - pos1: 1,33,9
+      pos2: 3,36,9
+      server: build
+  maps:
+    - name: creative
+      direction: north
+      pos: 17,37,9
+    - name: survival
+      direction: north
+      pos: 10,37,9
+    - name: build
+      direction: north
+      pos: 3,37,9
+  status-holograms:
+    - server: creative
+      pos: 16,35,8
+    - server: survival
+      pos: 9,35,8
+    - server: build
+      pos: 2,35,8
