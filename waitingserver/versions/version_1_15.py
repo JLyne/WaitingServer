@@ -118,13 +118,7 @@ class Version_1_15(Version):
                                       int(spawn.get('z'))),
                                   self.protocol.buff_type.pack("ib", 0, False))
 
-        self.protocol.send_packet("named_sound_effect",
-                                  self.protocol.buff_type.pack_string("minecraft:entity.enderman.teleport"),
-                                  self.protocol.buff_type.pack_varint(6),
-                                  self.protocol.buff_type.pack("iiiff",
-                                                               int(spawn.get('x')),
-                                                               int(spawn.get('y')),
-                                                               int(spawn.get('z')), 100000.0, 1))
+        self.send_global_sound("minecraft:entity.enderman.teleport", 6)
 
     def send_respawn(self):
         self.protocol.send_packet("respawn", self.protocol.buff_type.pack("iBq", 1, 0, 1),
@@ -167,28 +161,23 @@ class Version_1_15(Version):
             self.protocol.send_packet('change_game_state', self.protocol.buff_type.pack("Bf", 1, 0))
 
     def send_music(self, stop=False):
-        spawn = self.current_world.spawn
-
         self.protocol.send_packet("stop_sound", self.protocol.buff_type.pack("B", 2),
                                   self.protocol.buff_type.pack_string("minecraft:music.game"))
         self.protocol.send_packet("stop_sound", self.protocol.buff_type.pack("B", 2),
                                   self.protocol.buff_type.pack_string("minecraft:music.creative"))
 
         if stop is False:
-            self.protocol.send_packet("named_sound_effect",
-                                      self.protocol.buff_type.pack_string(self.current_world.music),
-                                      self.protocol.buff_type.pack_varint(2),
-                                      self.protocol.buff_type.pack("iiiff",
-                                                                   int(spawn.get('x')),
-                                                                   int(spawn.get('y')),
-                                                                   int(spawn.get('z')), 100000.0, 1))
+            self.send_global_sound(self.current_world.music, 2)
 
     def send_reset_sound(self):
+        self.send_global_sound("minecraft:item.trident.thunder", 6)
+
+    def send_global_sound(self, sound: str, channel: int):
         spawn = self.current_world.spawn
 
         self.protocol.send_packet("named_sound_effect",
-                                  self.protocol.buff_type.pack_string("minecraft:item.trident.thunder"),
-                                  self.protocol.buff_type.pack_varint(6),
+                                  self.protocol.buff_type.pack_string(sound),
+                                  self.protocol.buff_type.pack_varint(channel),
                                   self.protocol.buff_type.pack("iiiff",
                                                                int(spawn.get('x')),
                                                                int(spawn.get('y')),
