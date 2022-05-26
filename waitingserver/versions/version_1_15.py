@@ -1,8 +1,9 @@
 import json
 
+from quarry.types import chat
 from quarry.types.nbt import TagRoot, TagCompound, TagInt
 from quarry.types.uuid import UUID
-from typing import List
+from typing import List, Dict, Tuple, Union
 
 from waitingserver.Map import MapPart
 from waitingserver.direction import Direction
@@ -248,26 +249,20 @@ class Version_1_15(Version):
                                                                0, 0, int(direction),  # Rotation, facing
                                                                0, 0, 0))  # Velocity
 
+        self.send_entity_metadata(self.last_entity_id, self.get_map_frame_metadata(map_id))
+        self.last_entity_id += 1
+
+    def get_map_frame_metadata(self, map_id: int) -> Dict[Tuple[int, int], Union[str, int, bool]]:
         map_nbt = TagRoot({
             '': TagCompound({
                 'map': TagInt(map_id)
             })
         })
 
-        self.protocol.send_packet("entity_metadata",
-                                  self.protocol.buff_type.pack_varint(self.last_entity_id),  # Entity id
-                                  self.protocol.buff_type.pack("B", 0),  # Index 0, entity flags
-                                  self.protocol.buff_type.pack_varint(0),  # Type byte
-                                  self.protocol.buff_type.pack_varint(0x20),  # Value 0x20 - Invisible
-                                  self.protocol.buff_type.pack("B", 8),  # Index 8, item frame item
-                                  self.protocol.buff_type.pack_varint(6),  # Type slot
-                                  self.protocol.buff_type.pack("?", True),  # Item exists
-                                  self.protocol.buff_type.pack_varint(self.map_item_id),  # Filled map item id
-                                  self.protocol.buff_type.pack("b", 1),  # Item count
-                                  self.protocol.buff_type.pack_nbt(map_nbt),
-                                  self.protocol.buff_type.pack("B", 0xff))  # End of packet
-
-        self.last_entity_id += 1
+        return {
+            (0, 0): 0x20,  # Invisible (index 0, type 0 (byte))
+            (6, 8): {'item': self.map_item_id, 'count': 1, 'tag': map_nbt},  # Item (type 6 (slot), index 8)
+        }
 
     def send_map_data(self, part: MapPart):
         data = [
@@ -292,30 +287,24 @@ class Version_1_15(Version):
                                                                0, 0, 0,  # Rotation, head facing
                                                                0, 0, 0))  # Velocity
 
-        self.protocol.send_packet("entity_metadata",
-                                  self.protocol.buff_type.pack_varint(entity_id),  # Entity id
-                                  self.protocol.buff_type.pack("B", 0),  # Index 0, entity flags
-                                  self.protocol.buff_type.pack_varint(0),  # Type byte
-                                  self.protocol.buff_type.pack_varint(0x20),  # Value 0x20 - Invisible
-                                  self.protocol.buff_type.pack("B", 5),  # Index 5, Has no gravity
-                                  self.protocol.buff_type.pack_varint(7),  # Type boolean
-                                  self.protocol.buff_type.pack("?", True),  # No gravity
-                                  self.protocol.buff_type.pack("B", 0xff))  # End of packet
+        self.send_entity_metadata(entity_id, self.get_status_hologram_metadata())
 
         self.last_entity_id += 1
         return entity_id
 
-    def send_status_hologram_text(self, entity_id: int, text: str):
+    def send_entity_metadata(self, entity_id: int, metadata: Dict[Tuple[int, int], Union[str, int, bool]]):
         self.protocol.send_packet("entity_metadata",
-                                  self.protocol.buff_type.pack_varint(entity_id),  # Entity id
-                                  self.protocol.buff_type.pack("B", 2),  # Index 2, Custom name
-                                  self.protocol.buff_type.pack_varint(5),  # Type (boolean + chat)
-                                  self.protocol.buff_type.pack("?", True),  # Has custom name
-                                  self.protocol.buff_type.pack_string(text),  # The custom name
-                                  self.protocol.buff_type.pack("B", 3),  # Index 3, Custom name visible
-                                  self.protocol.buff_type.pack_varint(7),  # Type boolean
-                                  self.protocol.buff_type.pack("?", True),  # Custom name visible
-                                  self.protocol.buff_type.pack("B", 0xff))  # End of packet
+                                  self.protocol.buff_type.pack_varint(entity_id),
+                                  self.protocol.buff_type.pack_entity_metadata(metadata))
+
+    @staticmethod
+    def get_status_hologram_metadata(text: chat.Message = "") -> Dict[Tuple[int, int], Union[str, int, bool]]:
+        return {
+            (0, 0): 0x20,  # Custom name (index 0, type 0 (byte))
+            (7, 5): True,  # No gravity (index 5, type 7 (boolean))
+            (5, 2): text,  # Custom name (index 2, type 5 (optional chat))
+            (7, 3): True,  # Custom name visible (index 3, type 7 (boolean))
+        }
 
     def send_debug_marker(self, pos: List[int], name: str, r: int, g: int, b: int):
         encoded_color = 0

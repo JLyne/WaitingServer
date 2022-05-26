@@ -5,8 +5,9 @@ import time
 from copy import deepcopy
 from pathlib import Path
 
+from quarry.types import chat
 from quarry.types.buffer import Buffer
-from typing import List
+from typing import List, Dict, Tuple, Union
 
 from waitingserver.Map import Map, MapPart
 from waitingserver.direction import Direction
@@ -216,8 +217,8 @@ class Version(object, metaclass=abc.ABCMeta):
 
             if lines is not None:
                 for hologram in holograms:
-                    self.send_status_hologram_text(hologram[0], lines[0])
-                    self.send_status_hologram_text(hologram[1], lines[1])
+                    self.send_entity_metadata(hologram[0], self.get_status_hologram_metadata(lines[0]))
+                    self.send_entity_metadata(hologram[1], self.get_status_hologram_metadata(lines[1]))
 
     def send_debug_markers(self):
         spawn = self.current_world.spawn
@@ -339,6 +340,10 @@ class Version(object, metaclass=abc.ABCMeta):
         raise NotImplementedError('send_portal must be defined to use this base class')
 
     @abc.abstractmethod
+    def send_entity_metadata(self, entity_id: int, metadata: Dict[Tuple[int, int], Union[str, int, bool]]):
+        raise NotImplementedError('send_entity_metadata must be defined to use this base class')
+
+    @abc.abstractmethod
     def send_map_frame(self, pos: List[float], direction: Direction, map_id: int):
         raise NotImplementedError('send_map_frame must be defined to use this base class')
 
@@ -350,9 +355,10 @@ class Version(object, metaclass=abc.ABCMeta):
     def send_status_hologram(self, pos: List[float]):
         raise NotImplementedError('send_status_hologram must be defined to use this base class')
 
+    @staticmethod
     @abc.abstractmethod
-    def send_status_hologram_text(self, entity_id: int, text: str):
-        raise NotImplementedError('send_status_hologram_text must be defined to use this base class')
+    def get_status_hologram_metadata(text: chat.Message = None):
+        raise NotImplementedError('get_status_hologram_metadata must be defined to use this base class')
 
     @abc.abstractmethod
     def send_debug_marker(self, pos: List[int], name: str, r: int, g: int, b: int):

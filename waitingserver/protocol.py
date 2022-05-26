@@ -4,6 +4,7 @@ import random
 from copy import deepcopy
 
 from quarry.net.server import ServerProtocol
+from quarry.types import chat
 from quarry.types.uuid import UUID
 
 from waitingserver.log import file_handler, console_handler, logger
@@ -201,7 +202,11 @@ class Protocol(ServerProtocol):
             self.logger.warn("Failed to validate status plugin message. Is the status secret configured correctly?")
             return
 
-        self.factory.server_statuses = json.loads(msg)
+        server_statuses = json.loads(msg)
+        self.protocol.factory.server_statuses = {}
+
+        for server, status in server_statuses:
+            self.protocol.factory.server_statuses[server] = chat.Message(status)
 
         for player in self.factory.players:
             if player.protocol_mode == "play":
