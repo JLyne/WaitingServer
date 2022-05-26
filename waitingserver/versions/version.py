@@ -274,7 +274,7 @@ class Version(object, metaclass=abc.ABCMeta):
     @classmethod
     def get_tag_packet(cls):
         if cls.tag_packet is None:
-            cls.tag_packet = Buffer(open(os.path.join(parent_folder, 'tags', cls.tag_format + '.bin'),
+            cls.tag_packet = Buffer(open(os.path.join(parent_folder, 'data', 'tags', cls.tag_format + '.bin'),
                                          'rb').read()).read() if cls.tag_format is not None else None
 
         return cls.tag_packet

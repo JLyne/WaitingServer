@@ -9,12 +9,9 @@ block_cipher = None
 quarry_data = os.path.join(split(quarry.__file__)[0], 'data')
 
 datas = [
-    ( 'biomes/*.nbt', 'waitingserver/biomes' ),
-    ( 'tags/*.bin', 'waitingserver/tags' ),
-    ( 'data/0757_1.18.csv', 'quarry/data/packets' ),
-    ( 'data/0757_1.18.nbt', 'quarry/data/data_packs' ),
-    ( 'data/0758_1.18.2.csv', 'quarry/data/packets' ),
-    ( 'data/0758_1.18.2.nbt', 'quarry/data/data_packs' ),
+    ( 'data/tags/*.bin', 'waitingserver/data/tags' ),
+    ( 'data/packets/*.csv', 'quarry/data/packets' ),
+    ( 'data/data_packs/*.nbt', 'quarry/data/data_packs' ),
 ]
 
 datas.extend((file, dirname(file).split("site-packages")[1]) for file in glob.iglob(join(quarry_data,"**{}*.csv".format(sep)), recursive=True))
