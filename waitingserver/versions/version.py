@@ -87,29 +87,35 @@ class Version(object, metaclass=abc.ABCMeta):
     # Handle /spawn and /reset commands
     def packet_chat_message(self, buff):
         message = buff.unpack_string()
+        buff.read()
+
+        if message[0] == "/":
+            self.handle_command(message[0:])
+
+    def handle_command(self, command: str):
         now = time.time()
 
-        if message == "/spawn" or message == "/hub":
+        if command == "spawn" or command == "hub":
             if now - self.last_command < 0.5:
                 return
 
             self.spawn_player(True)
-        elif message == "/reset":
+        elif command == "reset":
             if now - self.last_command < 2:
                 return
 
             self.reset_world(effects=True)
 
-        elif message == "/credits":
+        elif command == "credits":
             if now - self.last_command < 0.5:
                 return
 
             self.send_chat_message(self.current_world.credit_json())
 
         elif self.protocol.voting_mode is True:
-            if message == "/prev":
+            if command == "prev":
                 self.previous_world()
-            elif message == "/next":
+            elif command == "next":
                 self.next_world()
 
         self.last_command = time.time()
