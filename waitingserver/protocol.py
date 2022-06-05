@@ -194,7 +194,7 @@ class Protocol(ServerProtocol):
         payload = json.loads(data.decode(encoding="utf-8"))
         payload_hmac = payload.get("hmac")
 
-        msg = payload.get("servers", dict())
+        msg = payload.get("servers", "{}")
         calculated_hmac = hmac.new(key=str.encode(self.status_secret, encoding="utf-8"),
                                    msg=str.encode(msg, encoding="utf-8"), digestmod="sha512")
 
@@ -203,10 +203,13 @@ class Protocol(ServerProtocol):
             return
 
         server_statuses = json.loads(msg)
-        self.protocol.factory.server_statuses = {}
+        self.factory.server_statuses = {}
 
-        for server, status in server_statuses:
-            self.protocol.factory.server_statuses[server] = chat.Message(status)
+        for server, status in server_statuses.items():
+            lines = status.get("lines", None)
+
+            if lines is not None and len(lines) == 2:
+                self.factory.server_statuses[server] = [chat.Message(json.loads(lines[0])), chat.Message(json.loads(lines[1]))]
 
         for player in self.factory.players:
             if player.protocol_mode == "play":
