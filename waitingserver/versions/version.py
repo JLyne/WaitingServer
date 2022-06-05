@@ -221,6 +221,9 @@ class Version(object, metaclass=abc.ABCMeta):
         for server, holograms in self.status_holograms.items():
             lines = self.protocol.factory.server_statuses.get(server, dict()).get('lines', None)
 
+            if self.protocol.debug_mode is True:
+                lines = ["Line 1 for " + server + " server status", "Line 2 for " + server + " server status"]
+
             if lines is not None:
                 for hologram in holograms:
                     self.send_entity_metadata(hologram[0], self.get_status_hologram_metadata(lines[0]))
