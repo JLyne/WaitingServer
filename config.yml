@@ -1,4 +1,4 @@
-default-world: Library
+default-world: RTGalaxTree
 status-secret: ''
 voting-url: ''
 maps:
@@ -243,7 +243,7 @@ worlds:
   environment:
     dimension: the_end
     time: 2400
-    music: 'minecraft:music_disc.mall'
+    #music: 'minecraft:music_disc.mall'
   bounds:
     pos1: 79,255,79
     pos2: -64,0,-64
@@ -274,3 +274,44 @@ worlds:
       pos: 9,35,8
     - server: build
       pos: 2,35,8
+- name: RTGalaxTree
+  contributors:
+    - _Cynder_
+    - ValentinT
+    - Tklots
+    - WhimsyBridges
+    - LonkReborn
+  folder: entry35
+  spawn: 39,66,-9,90,0
+  environment:
+    time: 13500
+  bounds:
+    pos1: 79,255,79
+    pos2: -64,0,-64
+  portals:
+    - pos1: 32,66,-4
+      pos2: 32,70,-2
+      server: creative
+    - pos1: 32,66,-10
+      pos2: 32,70,-8
+      server: survival
+    - pos1: 32,66,-16
+      pos2: 32,70,-14
+      server: build
+  maps:
+    - name: creative
+      direction: east
+      pos: 32,71,-2
+    - name: survival
+      direction: east
+      pos: 32,71,-8
+    - name: build
+      direction: east
+      pos: 32,71,-14
+  status-holograms:
+    - server: creative
+      pos: 34,68,-3
+    - server: survival
+      pos: 34,68,-9
+    - server: build
+      pos: 34,68,-15
