@@ -92,6 +92,13 @@ class Version(object, metaclass=abc.ABCMeta):
         if message[0] == "/":
             self.handle_command(message[0:])
 
+    # 1.19+
+    def packet_chat_command(self, buff):
+        command = buff.unpack_string()
+        buff.read()
+
+        self.handle_command(command)
+
     def handle_command(self, command: str):
         now = time.time()
 
