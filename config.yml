@@ -1,4 +1,4 @@
-default-world: RTGalaxTree
+default-world: Oasis
 status-secret: ''
 voting-url: ''
 maps:
@@ -315,3 +315,49 @@ worlds:
       pos: 34,68,-9
     - server: build
       pos: 34,68,-15
+- name: Oasis
+  contributors:
+    - LadanTF2
+  folder: entry3
+  spawn: 8,34,5,0,0
+  environment:
+    time: 3853
+  bounds:
+    pos1: 79,255,79
+    pos2: -64,0,-64
+  portals:
+    - pos1: 11,32,17
+      pos2: 13,32,19
+      server: creative
+    - pos1: 7,32,17
+      pos2: 9,32,19
+      server: survival
+    - pos1: 3,32,17
+      pos2: 5,32,19
+      server: build
+  maps:
+    - name: creative
+      direction: north
+      pos: 13,36,18
+    - name: creative
+      direction: south
+      pos: 11,36,18
+    - name: survival
+      direction: north
+      pos: 9,36,18
+    - name: survival
+      direction: south
+      pos: 7,36,18
+    - name: build
+      direction: north
+      pos: 5,36,18
+    - name: build
+      direction: south
+      pos: 3,36,18
+  status-holograms:
+    - server: creative
+      pos: 12,34.5,17
+    - server: survival
+      pos: 8,34.5,17
+    - server: build
+      pos: 4,34.5,17
