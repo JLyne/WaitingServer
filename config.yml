@@ -4,6 +4,8 @@ voting-url: ''
 maps:
 - name: creative
   width: 3
+- name: stresstest
+  width: 3
 - name: survival
   width: 3
 - name: build
@@ -32,7 +34,7 @@ worlds:
       server: creative
     - pos1: -1,30,-13
       pos2: 1,31,-11
-      server: survival
+      server: stresstest
     - pos1: 3,30,-13
       pos2: 5,31,-11
       server: build
@@ -43,10 +45,10 @@ worlds:
     - name: creative
       direction: south
       pos: -5,35,-12
-    - name: survival
+    - name: stresstest
       direction: north
       pos: 1,35,-12
-    - name: survival
+    - name: stresstest
       direction: south
       pos: -1,35,-12
     - name: build
@@ -58,7 +60,7 @@ worlds:
   status-holograms:
     - server: creative
       pos: -4,33.5,-11
-    - server: survival
+    - server: stresstest
       pos: 0,34,-11
     - server: build
       pos: 4,33.5,-11
@@ -77,7 +79,7 @@ worlds:
       server: creative
     - pos1: -1,30,-14
       pos2: 1,31,-12
-      server: survival
+      server: stresstest
     - pos1: 3,30,-14
       pos2: 5,31,-12
       server: build
@@ -102,7 +104,7 @@ worlds:
       server: creative
     - pos1: 7,32,7
       pos2: 9,32,9
-      server: survival
+      server: stresstest
     - pos1: 3,32,7
       pos2: 5,32,9
       server: build
@@ -116,13 +118,13 @@ worlds:
     - name: creative
       direction: bottom
       pos: 11,32,8
-    - name: survival
+    - name: stresstest
       direction: north
       pos: 9,36,8
-    - name: survival
+    - name: stresstest
       direction: south
       pos: 7,36,8
-    - name: survival
+    - name: stresstest
       direction: bottom
       pos: 7,32,8
     - name: build
@@ -137,7 +139,7 @@ worlds:
   status-holograms:
     - server: creative
       pos: 12,34.5,7
-    - server: survival
+    - server: stresstest
       pos: 8,35,7
     - server: build
       pos: 4,34.5,7
@@ -157,7 +159,7 @@ worlds:
       server: creative
     - pos1: -23,35,-57
       pos2: -21,35,-55
-      server: survival
+      server: stresstest
     - pos1: -27,35,-57
       pos2: -25,35,-55
       server: build
@@ -168,10 +170,10 @@ worlds:
     - name: creative
       direction: south
       pos: -19,40,-56
-    - name: survival
+    - name: stresstest
       direction: north
       pos: -21,40,-56
-    - name: survival
+    - name: stresstest
       direction: south
       pos: -23,40,-56
     - name: build
@@ -183,7 +185,7 @@ worlds:
   status-holograms:
     - server: creative
       pos: -18,37.5,-57
-    - server: survival
+    - server: stresstest
       pos: -22,38,-57
     - server: build
       pos: -26,37.5,-57
@@ -205,7 +207,7 @@ worlds:
       server: creative
     - pos1: 7,32,7
       pos2: 9,32,9
-      server: survival
+      server: stresstest
     - pos1: 3,32,7
       pos2: 5,32,9
       server: build
@@ -216,10 +218,10 @@ worlds:
     - name: creative
       direction: south
       pos: 11,36,8
-    - name: survival
+    - name: stresstest
       direction: north
       pos: 9,36,8
-    - name: survival
+    - name: stresstest
       direction: south
       pos: 7,36,8
     - name: build
@@ -231,7 +233,7 @@ worlds:
   status-holograms:
     - server: creative
       pos: 12,34.5,7
-    - server: survival
+    - server: stresstest
       pos: 8,35,7
     - server: build
       pos: 4,34.5,7
@@ -253,7 +255,7 @@ worlds:
       server: creative
     - pos1: 8,33,9
       pos2: 10,36,9
-      server: survival
+      server: stresstest
     - pos1: 1,33,9
       pos2: 3,36,9
       server: build
@@ -261,7 +263,7 @@ worlds:
     - name: creative
       direction: north
       pos: 17,37,9
-    - name: survival
+    - name: stresstest
       direction: north
       pos: 10,37,9
     - name: build
@@ -270,7 +272,7 @@ worlds:
   status-holograms:
     - server: creative
       pos: 16,35,8
-    - server: survival
+    - server: stresstest
       pos: 9,35,8
     - server: build
       pos: 2,35,8
@@ -294,7 +296,7 @@ worlds:
       server: creative
     - pos1: 32,66,-10
       pos2: 32,70,-8
-      server: survival
+      server: stresstest
     - pos1: 32,66,-16
       pos2: 32,70,-14
       server: build
@@ -302,7 +304,7 @@ worlds:
     - name: creative
       direction: east
       pos: 32,71,-2
-    - name: survival
+    - name: stresstest
       direction: east
       pos: 32,71,-8
     - name: build
@@ -311,7 +313,7 @@ worlds:
   status-holograms:
     - server: creative
       pos: 34,68,-3
-    - server: survival
+    - server: stresstest
       pos: 34,68,-9
     - server: build
       pos: 34,68,-15
@@ -331,7 +333,7 @@ worlds:
       server: creative
     - pos1: 7,32,17
       pos2: 9,32,19
-      server: survival
+      server: stresstest
     - pos1: 3,32,17
       pos2: 5,32,19
       server: build
@@ -342,10 +344,10 @@ worlds:
     - name: creative
       direction: south
       pos: 11,36,18
-    - name: survival
+    - name: stresstest
       direction: north
       pos: 9,36,18
-    - name: survival
+    - name: stresstest
       direction: south
       pos: 7,36,18
     - name: build
@@ -357,7 +359,7 @@ worlds:
   status-holograms:
     - server: creative
       pos: 12,34.5,17
-    - server: survival
+    - server: stresstest
       pos: 8,34.5,17
     - server: build
       pos: 4,34.5,17
