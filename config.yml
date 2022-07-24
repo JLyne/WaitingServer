@@ -1,4 +1,4 @@
-default-world: Oasis
+default-world: '1952'
 status-secret: ''
 voting-url: ''
 maps:
@@ -363,3 +363,49 @@ worlds:
       pos: 8,34.5,17
     - server: build
       pos: 4,34.5,17
+- name: '1952'
+  contributors:
+    - YourLocalPiebro
+  folder: entry4
+  spawn: 47,34,22,180,0
+  environment:
+    time: 18000
+  bounds:
+    pos1: 79,255,79
+    pos2: -64,0,-64
+  portals:
+    - pos1: 42,33,7
+      pos2: 44,33,9
+      server: creative
+    - pos1: 46,33,7
+      pos2: 48,33,9
+      server: stresstest
+    - pos1: 50,33,7
+      pos2: 52,33,9
+      server: build
+  maps:
+    - name: creative
+      direction: north
+      pos: 44,37,8
+    - name: creative
+      direction: south
+      pos: 42,37,8
+    - name: stresstest
+      direction: north
+      pos: 48,37,8
+    - name: stresstest
+      direction: south
+      pos: 46,37,8
+    - name: build
+      direction: north
+      pos: 52,37,8
+    - name: build
+      direction: south
+      pos: 50,37,8
+  status-holograms:
+    - server: creative
+      pos: 43,35.5,9
+    - server: stresstest
+      pos: 47,36,9
+    - server: build
+      pos: 51,35.5,9
