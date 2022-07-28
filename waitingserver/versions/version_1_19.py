@@ -115,7 +115,7 @@ class Version_1_19(Version_1_18_2):
 
     def send_chat_message(self, message):
         # Use system chat for all messages
-        self.protocol.send_packet('system_chat',
+        self.protocol.send_packet('system_message',
                                   self.protocol.buff_type.pack_string(message),
                                   self.protocol.buff_type.pack("b", 1))
 
