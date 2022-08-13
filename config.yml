@@ -1,4 +1,4 @@
-default-world: '1952'
+default-world: 'The Grand Library'
 status-secret: ''
 voting-url: ''
 maps:
@@ -409,3 +409,50 @@ worlds:
       pos: 47,36,9
     - server: build
       pos: 51,35.5,9
+- name: The Grand Library
+  contributors:
+    - WhimsyBridges
+    - LonkReborn
+  folder: entry30
+  spawn: -6,74,30,180,0
+  environment:
+    time: 3853
+  bounds:
+    pos1: 79,255,79
+    pos2: -64,0,-64
+  portals:
+    - pos1: -11,73,17
+      pos2: -9,73,19
+      server: creative
+    - pos1: -7,73,17
+      pos2: -5,73,19
+      server: stresstest
+    - pos1: -3,73,17
+      pos2: -1,73,19
+      server: build
+  maps:
+    - name: creative
+      direction: north
+      pos: -9,77,18
+    - name: creative
+      direction: south
+      pos: -11,77,18
+    - name: stresstest
+      direction: north
+      pos: -5,77,18
+    - name: stresstest
+      direction: south
+      pos: -7,77,18
+    - name: build
+      direction: north
+      pos: -1,77,18
+    - name: build
+      direction: south
+      pos: -3,77,18
+  status-holograms:
+    - server: creative
+      pos: -10,75.5,19
+    - server: stresstest
+      pos: -6,76,19
+    - server: build
+      pos: -2,75.5,19
