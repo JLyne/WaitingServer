@@ -102,19 +102,7 @@ class Protocol(ServerProtocol):
             buff.read()
             return
 
-        self.login_expecting = None
-        self.display_name_confirmed = True
-        self.display_name = buff.unpack_string()
-
-        if self.protocol_version >= 759:  # 1.19+
-            if buff.unpack('?'):
-                timestamp = buff.unpack("Q")
-                key_length = buff.unpack_varint()
-                key_bytes = buff.read(key_length)
-                signature_length = buff.unpack_varint()
-                signature = buff.read(signature_length)
-
-        self.player_joined()
+        super().packet_login_start(buff)
 
     def packet_login_plugin_response(self, buff):
         if self.login_expecting != 2 or self.protocol_mode != "login":
