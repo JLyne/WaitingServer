@@ -51,6 +51,10 @@ class Version(object, metaclass=abc.ABCMeta):
         else:
             self.current_world = get_default_world(self.chunk_format)
 
+        if self.current_world is None:
+            self.protocol.close('No defined worlds compatible with current client version')
+            return
+
         self.send_join_game()
         self.send_commands()
         self.send_tags()
