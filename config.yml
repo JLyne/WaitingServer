@@ -11,15 +11,6 @@ maps:
 - name: build
   width: 3
 worlds:
-- name: Unsupported version
-  folder: unsupported
-  spawn: 0.5,32,0.5,180,0
-  environment:
-    time: 18000
-  bounds:
-    pos1: 16,255,16
-    pos2: -16,0,-16
-  portals: {}
 - name: Waiting
   folder: waiting
   spawn: 0,32,0,180,0
@@ -64,25 +55,6 @@ worlds:
       pos: 0,34,-11
     - server: build
       pos: 4,33.5,-11
-- name: Waiting Winter
-  folder: waiting_winter
-  spawn: 0,32,0,180,0
-  environment:
-    time: 18000
-    weather: 'rain'
-  bounds:
-    pos1: 111,255,111
-    pos2: -95,0,-95
-  portals:
-    - pos1: -5,30,-14
-      pos2: -3,31,-12
-      server: creative
-    - pos1: -1,30,-14
-      pos2: 1,31,-12
-      server: stresstest
-    - pos1: 3,30,-14
-      pos2: 5,31,-12
-      server: build
 - name: Harristown Forest
   contributors:
     - Jimbus Khan
