@@ -1,4 +1,4 @@
-default-world: 'The Grand Library'
+default-world: 'Lush Caves'
 status-secret: ''
 voting-url: ''
 maps:
@@ -428,3 +428,41 @@ worlds:
       pos: -6,76,19
     - server: build
       pos: -2,75.5,19
+- name: Lush Caves
+  contributors:
+    - +periuwu5882
+  folder: entry9
+  spawn: 8,33,-5,0,0
+  environment:
+    time: 3853
+    music: 'minecraft:music_disc.otherside'
+  bounds:
+    pos1: 79,255,79
+    pos2: -64,0,-64
+  portals:
+    - pos1: 11,32,7
+      pos2: 13,32,9
+      server: creative
+    - pos1: 7,32,7
+      pos2: 9,32,9
+      server: stresstest
+    - pos1: 3,32,7
+      pos2: 5,32,9
+      server: build
+  maps:
+    - name: creative
+      direction: north
+      pos: 13,36,8
+    - name: survival
+      direction: north
+      pos: 9,36,8
+    - name: build
+      direction: north
+      pos: 5,36,8
+  status-holograms:
+    - server: creative
+      pos: 12,34.5,7
+    - server: stresstest
+      pos: 8,35,7
+    - server: build
+      pos: 4,34.5,7
