@@ -1,4 +1,4 @@
-default-world: 'Lush Caves'
+default-world: 'Sakura Gardens'
 status-secret: ''
 voting-url: ''
 maps:
@@ -466,3 +466,41 @@ worlds:
       pos: 8,35,7
     - server: build
       pos: 4,34.5,7
+- name: Sakura Gardens
+  contributors:
+    - CrispyMiner
+  folder: entry19
+  spawn: 21,34,18,180,0
+  environment:
+    time: 22500
+    #music: 'minecraft:music_disc.mall'
+  bounds:
+    pos1: 79,255,79
+    pos2: -64,0,-64
+  portals:
+    - pos1: 14,33,10
+      pos2: 16,33,12
+      server: creative
+    - pos1: 20,33,10
+      pos2: 22,33,12
+      server: stresstest
+    - pos1: 26,33,10
+      pos2: 28,33,12
+      server: build
+  maps:
+    - name: creative
+      direction: south
+      pos: 14,37,12
+    - name: stresstest
+      direction: south
+      pos: 20,37,12
+    - name: build
+      direction: south
+      pos: 26,37,12
+  status-holograms:
+    - server: creative
+      pos: 15,35.5,13
+    - server: stresstest
+      pos: 21,36,13
+    - server: build
+      pos: 27,35.5,13
