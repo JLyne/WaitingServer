@@ -453,7 +453,7 @@ worlds:
     - name: creative
       direction: north
       pos: 13,36,8
-    - name: survival
+    - name: stresstest
       direction: north
       pos: 9,36,8
     - name: build
