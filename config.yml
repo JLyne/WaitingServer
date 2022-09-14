@@ -1,4 +1,4 @@
-default-world: 'Sakura Gardens'
+default-world: 'Portal Forest'
 status-secret: ''
 voting-url: ''
 maps:
@@ -504,3 +504,40 @@ worlds:
       pos: 21,36,13
     - server: build
       pos: 27,35.5,13
+- name: Portal Forest
+  contributors:
+    - PrinceTrellis
+  folder: entry22
+  spawn: 8,33,-5,0,0
+  environment:
+    time: 13500
+  bounds:
+    pos1: 79,255,79
+    pos2: -64,0,-64
+  portals:
+    - pos1: 13,33,8
+      pos2: 15,38,8
+      server: creative
+    - pos1: 7,33,8
+      pos2: 9,38,8
+      server: stresstest
+    - pos1: 1,33,8
+      pos2: 3,38,8
+      server: build
+  maps:
+    - name: creative
+      direction: north
+      pos: 15,38,7
+    - name: stresstest
+      direction: north
+      pos: 9,38,7
+    - name: build
+      direction: north
+      pos: 3,38,7
+  status-holograms:
+    - server: creative
+      pos: 14,35,5
+    - server: stresstest
+      pos: 8,35,5
+    - server: build
+      pos: 2,35,5
