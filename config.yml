@@ -550,7 +550,7 @@ worlds:
     - Oa6ix
     - Badwolfe44
   folder: entry21
-  spawn: 8,33,-5,0,0
+  spawn: 8,33,-1,0,0
   environment:
     time: 2000
   bounds:
