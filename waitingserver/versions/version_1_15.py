@@ -254,6 +254,13 @@ class Version_1_15(Version):
         }
 
     def send_map_data(self, part: MapPart):
+        if self.map_packets.get(self.map_format) is None:
+            self.map_packets[self.map_format] = dict()
+
+        if self.map_packets[self.map_format].get(part.map_id) is not None:
+            self.protocol.send_packet("map", *self.map_packets[self.map_format][part.map_id])
+            return
+
         data = [
             self.protocol.buff_type.pack_varint(part.map_id),
             self.protocol.buff_type.pack("b??BBBB", 0, True, False, 128, 128, 0, 0),
@@ -263,6 +270,7 @@ class Version_1_15(Version):
         for i in range(0, 16384):
             data.append(self.protocol.buff_type.pack("B", part.data[i]))
 
+        self.map_packets[self.map_format][part.map_id] = data
         self.protocol.send_packet("map", *data)
 
     def send_status_hologram(self, pos: List[float]):

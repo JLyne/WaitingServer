@@ -28,9 +28,8 @@ class Version(object, metaclass=abc.ABCMeta):
 
     item_frame_id = None
     map_item_id = None
-    last_entity_id = 1000
 
-    status_holograms = dict()
+    map_packets = dict()
 
     def __init__(self, protocol: Protocol, bedrock: False):
         self.protocol = protocol
@@ -41,6 +40,9 @@ class Version(object, metaclass=abc.ABCMeta):
         self.last_command = 0
 
         self.is_bedrock = bedrock
+
+        self.last_entity_id = 1000
+        self.status_holograms = dict()
 
     def player_joined(self):
         self.protocol.ticker.add_loop(100, self.send_keep_alive)  # Keep alive packets
