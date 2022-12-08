@@ -75,3 +75,59 @@ class Version_1_19_3(Version_1_19_1):
             (0, 0): 0x20,  # Invisible (index 0, type 0 (byte))
             (7, 8): {'item': self.map_item_id, 'count': 1, 'tag': map_nbt},  # Item (type 7 (slot), index 8)
         }
+
+    # FIXME: Remove everything below when quarry updates
+    def send_entity_metadata(self, entity_id: int, metadata: Dict[Tuple[int, int], Union[str, int, bool]]):
+        self.protocol.send_packet("entity_metadata",
+                                  self.protocol.buff_type.pack_varint(entity_id),
+                                  self.pack_entity_metadata(metadata))
+
+    def pack_entity_metadata(self, metadata):
+        """
+        Packs entity metadata.
+        """
+
+        pack_position = lambda pos: self.protocol.buff_type.pack_position(*pos)
+        pack_global_position = lambda pos: self.pack_global_position(*pos)
+
+        out = b""
+        for ty_key, val in metadata.items():
+            ty, key = ty_key
+            out += self.protocol.buff_type.pack('B', key)
+            out += self.protocol.buff_type.pack_varint(ty)
+
+            if   ty == 0:  out += self.protocol.buff_type.pack('b', val)
+            elif ty == 1:  out += self.protocol.buff_type.pack_varint(val)
+            elif ty == 2:  out += self.protocol.buff_type.pack('q', val)
+            elif ty == 3:  out += self.protocol.buff_type.pack('f', val)
+            elif ty == 4:  out += self.protocol.buff_type.pack_string(val)
+            elif ty == 5:  out += self.protocol.buff_type.pack_chat(val)
+            elif ty == 6:  out += self.protocol.buff_type.pack_optional(self.protocol.buff_type.pack_chat, val)
+            elif ty == 7:  out += self.protocol.buff_type.pack_slot(**val)
+            elif ty == 8:  out += self.protocol.buff_type.pack('?', val)
+            elif ty == 9:  out += self.protocol.buff_type.pack_rotation(*val)
+            elif ty == 10:  out += self.protocol.buff_type.pack_position(*val)
+            elif ty == 11: out += self.protocol.buff_type.pack_optional(pack_position, val)
+            elif ty == 12: out += self.protocol.buff_type.pack_direction(val)
+            elif ty == 13: out += self.protocol.buff_type.pack_optional(self.protocol.buff_type.pack_uuid, val)
+            elif ty == 14: out += self.protocol.buff_type.pack_block(val)
+            elif ty == 15: out += self.protocol.buff_type.pack_nbt(val)
+            elif ty == 16: out += self.protocol.buff_type.pack_particle(*val)
+            elif ty == 17: out += self.protocol.buff_type.pack_villager(*val)
+            elif ty == 18: out += self.protocol.buff_type.pack_optional_varint(val)
+            elif ty == 19: out += self.protocol.buff_type.pack_pose(val)
+            elif ty == 20:  out += self.protocol.buff_type.pack_varint(val)
+            elif ty == 21:  out += self.protocol.buff_type.pack_varint(val)
+            elif ty == 22:  out += self.protocol.buff_type.pack_optional(pack_global_position, val)
+            elif ty == 23:  out += self.protocol.buff_type.pack_varint(val)
+            else: raise ValueError("Unknown entity metadata type: %d" % ty)
+        out += self.protocol.buff_type.pack('B', 255)
+        return out
+
+    def pack_global_position(self, dimension, x, y, z):
+        """
+        Packs a global position.
+        """
+
+        return self.protocol.buff_type.pack_string(dimension) + self.protocol.buff_type.pack_position(x, y, z)
+    # FIXME: Remove everything above when quarry updates

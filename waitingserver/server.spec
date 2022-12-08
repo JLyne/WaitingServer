@@ -11,7 +11,7 @@ quarry_data = os.path.join(split(quarry.__file__)[0], 'data')
 datas = [
     ( 'data/tags/*.bin', 'waitingserver/data/tags' ),
     ( 'data/packets/*.csv', 'quarry/data/packets' ),
-    ( 'data/data_packs/*.nbt', 'quarry/data/data_packs' ),
+    ( 'data/data_packs/*.nbt', 'quarry/data/data_packs' )
 ]
 
 datas.extend((file, dirname(file).split("site-packages")[1]) for file in glob.iglob(join(quarry_data,"**{}*.csv".format(sep)), recursive=True))
