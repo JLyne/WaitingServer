@@ -25,13 +25,16 @@ jobs:
         source: waitingserver/dist/linux/amd64/server
         target: server
 
+    - name: Tar packets
+      run: tar -cvf packets.tar packets
+
     - uses: actions/upload-artifact@v3
       with:
         if-no-files-found: error
         name: waitingserver-linux
         path: |
           server
-          packets
+          packets.tar
           maps
           config.yml
         
@@ -53,12 +56,15 @@ jobs:
         source: waitingserver/dist/windows/win64/server.exe
         target: server.exe
 
+    - name: Tar packets
+      run: tar -cvf packets.tar packets
+
     - uses: actions/upload-artifact@v3
       with:
         if-no-files-found: error
         name: waitingserver-windows
         path: |
           server.exe
-          packets
+          packets.tar
           maps
           config.yml
