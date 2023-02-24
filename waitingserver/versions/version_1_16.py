@@ -20,7 +20,7 @@ class Version_1_16(Version_1_15):
             '': TagCompound({
                 'dimension': TagList([
                     TagCompound({
-                        'name': TagString("minecraft:overworld"),
+                        'name': TagString(self.current_world.dimension),
                         'natural': TagByte(1),
                         'ambient_light': TagFloat(0.0),
                         'has_ceiling': TagByte(0),
@@ -44,7 +44,7 @@ class Version_1_16(Version_1_15):
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack_string("rtgame:reset"),
                                   self.protocol.buff_type.pack_nbt(codec),
-                                  self.protocol.buff_type.pack_string("minecraft:overworld"),
+                                  self.protocol.buff_type.pack_string(self.current_world.dimension),
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("qB", 0, 0),
                                   self.protocol.buff_type.pack_varint(7),
@@ -58,7 +58,7 @@ class Version_1_16(Version_1_15):
                                   self.protocol.buff_type.pack("???", False, False, True))
 
         self.protocol.send_packet("respawn",
-                                  self.protocol.buff_type.pack_string("minecraft:overworld"),
+                                  self.protocol.buff_type.pack_string(self.current_world.dimension),
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("qBB", 0, 1, 1),
                                   self.protocol.buff_type.pack("???", False, False, True))

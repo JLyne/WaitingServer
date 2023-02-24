@@ -8,8 +8,8 @@ class Version_1_18(Version_1_17_1):
     chunk_format = '1.18'
     tag_format = '1.18'
 
-    def get_dimension_settings(self):
-        settings = super().get_dimension_settings()
+    def get_dimension_settings(self, name: str):
+        settings = super().get_dimension_settings(name)
 
         settings['min_y'] = TagInt(-64)
         settings['height'] = TagInt(384)
@@ -25,7 +25,7 @@ class Version_1_18(Version_1_17_1):
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack_string("rtgame:reset"),
                                   self.protocol.buff_type.pack_nbt(self.dimension_codec),
-                                  self.protocol.buff_type.pack_nbt(self.current_dimension),
+                                  self.protocol.buff_type.pack_nbt(self.dimension_settings[self.current_world.dimension]),
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("q", 0),
                                   self.protocol.buff_type.pack_varint(0),

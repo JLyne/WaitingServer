@@ -27,7 +27,7 @@ class Version_1_19(Version_1_18_2):
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack_string("rtgame:reset"),
                                   self.protocol.buff_type.pack_nbt(self.dimension_codec),
-                                  self.protocol.buff_type.pack_string("minecraft:overworld"),  # Current dimension is now a string
+                                  self.protocol.buff_type.pack_string(self.current_world.dimension),  # Current dimension is now a string
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("q", 0),
                                   self.protocol.buff_type.pack_varint(0),
@@ -37,19 +37,19 @@ class Version_1_19(Version_1_18_2):
 
     def send_respawn(self):
         self.protocol.send_packet("respawn",
-                                  self.protocol.buff_type.pack_string("minecraft:overworld"),  # Current dimension is now a string
+                                  self.protocol.buff_type.pack_string(self.current_world.dimension),  # Current dimension is now a string
                                   self.protocol.buff_type.pack_string("rtgame:reset"),
                                   self.protocol.buff_type.pack("qBB", 0, 1, 1),
                                   self.protocol.buff_type.pack("????", False, False, True, False))
 
         self.protocol.send_packet("respawn",
-                                  self.protocol.buff_type.pack_string("minecraft:overworld"),  # Current dimension is now a string
+                                  self.protocol.buff_type.pack_string(self.current_world.dimension),  # Current dimension is now a string
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("qBB", 0, 1, 1),
                                   self.protocol.buff_type.pack("????", False, False, True, False))
 
-    def get_dimension_settings(self):
-        settings = super().get_dimension_settings()
+    def get_dimension_settings(self, name: str):
+        settings = super().get_dimension_settings(name)
 
         # New dimension settings
         settings['monster_spawn_block_light_limit'] = TagInt(0)

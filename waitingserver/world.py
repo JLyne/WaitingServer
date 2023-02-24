@@ -18,7 +18,7 @@ class World:
 		environment = config.get('environment', dict())
 
 		self.time = int(environment.get('time', 0))
-		self.dimension = environment.get('dimension', 'overworld')
+		self.dimension = "minecraft:{}".format(environment.get('dimension', 'overworld'))
 		self.weather = environment.get('weather', 'clear')
 		self.music = environment.get('music', 'minecraft:music.end')
 		self.cycle = environment.get('cycle', False)

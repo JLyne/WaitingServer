@@ -12,30 +12,30 @@ class Version_1_16_2(Version_1_16):
     def __init__(self, protocol: Protocol, bedrock: False):
         super(Version_1_16_2, self).__init__(protocol, bedrock)
 
-        self.dimension_settings = None
-        self.dimension = None
         self.dimension_codec = None
         self.current_dimension = None
 
     def init_dimension_codec(self):
-        self.dimension_settings = self.get_dimension_settings()
-
-        self.dimension = {
-            'name': TagString("minecraft:{}".format(self.current_world.dimension)),
-            'id': TagInt(0),
-            'element': TagCompound(self.dimension_settings),
-        }
-
-        self.current_dimension = TagRoot({
-            '': TagCompound(self.dimension_settings),
-        })
-
         self.dimension_codec = data_packs[self.protocol_version]
 
         self.dimension_codec.body.value['minecraft:dimension_type'] = TagCompound({
             'type': TagString("minecraft:dimension_type"),
             'value': TagList([
-                TagCompound(self.dimension)
+                TagCompound({
+                    'name': TagString("minecraft:overworld"),
+                    'id': TagInt(0),
+                    'element': TagCompound(self.get_dimension_settings("overworld")),
+                }),
+                TagCompound({
+                    'name': TagString("minecraft:nether"),
+                    'id': TagInt(1),
+                    'element': TagCompound(self.get_dimension_settings("nether")),
+                }),
+                TagCompound({
+                    'name': TagString("minecraft:the_end"),
+                    'id': TagInt(2),
+                    'element': TagCompound(self.get_dimension_settings("the_end")),
+                })
             ]),
         })
 
@@ -47,25 +47,22 @@ class Version_1_16_2(Version_1_16):
                 effects.value['sky_color'].value = effects.value['fog_color'].value = \
                     effects.value['water_color'].value = effects.value['water_fog_color'].value = 0
 
-    def get_dimension_settings(self):
+    def get_dimension_settings(self, name: str):
         settings = {
             'piglin_safe': TagByte(0),
             'natural': TagByte(1),
             'ambient_light': TagFloat(0.0),
-            'infiniburn': TagString("minecraft:infiniburn_{}".format(self.current_world.dimension)),
+            'infiniburn': TagString("minecraft:infiniburn_{}".format(name)),
             'respawn_anchor_works': TagByte(0),
             'has_skylight': TagByte(1),
             'bed_works': TagByte(0),
-            "effects": TagString("minecraft:{}".format(self.current_world.dimension)),
+            "effects": TagString("minecraft:{}".format(name)),
             'has_raids': TagByte(0),
             'logical_height': TagInt(256),
             'coordinate_scale': TagFloat(1.0),
             'ultrawarm': TagByte(0),
             'has_ceiling': TagByte(0),
         }
-
-        if self.current_world.time is not None and self.current_world.cycle is False:
-            settings['fixed_time'] = TagInt(self.current_world.time)
 
         return settings
 
@@ -99,7 +96,3 @@ class Version_1_16_2(Version_1_16):
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("qBB", 0, 1, 1),
                                   self.protocol.buff_type.pack("???", False, False, True))
-
-    def send_time(self):
-        if self.current_world.cycle is True:
-            super().send_time()

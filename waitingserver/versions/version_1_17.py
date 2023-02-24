@@ -10,8 +10,8 @@ class Version_1_17(Version_1_16_2):
 
     map_item_id = 847
 
-    def get_dimension_settings(self):
-        settings = super().get_dimension_settings()
+    def get_dimension_settings(self, name: str):
+        settings = super().get_dimension_settings(name)
 
         settings['min_y'] = TagInt(0)
         settings['height'] = TagInt(256)
