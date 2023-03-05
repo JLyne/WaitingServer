@@ -14,9 +14,9 @@ class Version_1_19(Version_1_18_2):
     chunk_format = '1.19'
     tag_format = '1.19'
 
-    armor_stand_id = 2
-    item_frame_id = 35
-    map_item_id = 886
+    hologram_entity_id = 2 # Armor Stand
+    map_entity_id = 35 # Glow item frame
+    map_item_id = 886 # Filled map
 
     def send_join_game(self):
         self.init_dimension_codec()
@@ -62,7 +62,7 @@ class Version_1_19(Version_1_18_2):
         self.protocol.send_packet("spawn_object",  # All entity spawns now use spawn_object
                                   self.protocol.buff_type.pack_varint(self.last_entity_id),
                                   self.protocol.buff_type.pack_uuid(UUID.random()),
-                                  self.protocol.buff_type.pack_varint(self.armor_stand_id),
+                                  self.protocol.buff_type.pack_varint(self.hologram_entity_id),
                                   self.protocol.buff_type.pack("dddbbbbhhh",
                                                                pos[0], pos[1], pos[2],
                                                                0, 0, 0, 0,  # Extra byte for head yaw
@@ -77,7 +77,7 @@ class Version_1_19(Version_1_18_2):
         self.protocol.send_packet("spawn_object",
                                   self.protocol.buff_type.pack_varint(self.last_entity_id),
                                   self.protocol.buff_type.pack_uuid(UUID.random()),
-                                  self.protocol.buff_type.pack_varint(self.item_frame_id),
+                                  self.protocol.buff_type.pack_varint(self.map_entity_id),
                                   self.protocol.buff_type.pack("dddbbb", pos[0], pos[1], pos[2], 0, 0, 0),  # Extra byte for head yaw
                                   self.protocol.buff_type.pack_varint(int(direction)),
                                   self.protocol.buff_type.pack("hhh", 0, 0, 0))

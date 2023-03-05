@@ -20,16 +20,18 @@ parent_folder = Path(__file__).parent.parent
 
 class Version(object, metaclass=abc.ABCMeta):
     protocol_version = None
-    chunk_format = None
-    tag_format = None
-    map_format = None
+    chunk_format = None # Subfolder to use when sending packets for a world
+    tag_format = None # Packet to use when sending tags for a world
+    map_format = None # Subfolder to use when sending maps for a world
 
-    tag_packet = None
+    hologram_entity_id = None # Entity ID to use when creating holograms
+    hologram_lines_separate = True # Whether separate hologram entities are needed for each line of text
+    hologram_y_offset = None # Vertical offset for hologram position
+    map_entity_id = None # Entity ID to use when creating maps
+    map_item_id = None # Item ID to use for the maps themselves
 
-    item_frame_id = None
-    map_item_id = None
-
-    map_packets = dict()
+    tag_packet = None # Tag packet cache
+    map_packets = dict() # Map packet cache
 
     def __init__(self, protocol: Protocol, bedrock: False):
         self.protocol = protocol
@@ -220,27 +222,40 @@ class Version(object, metaclass=abc.ABCMeta):
             holograms = []
             pos = deepcopy(hologram.pos)
 
+            # Move to center of block
             pos[0] += 0.5
-            pos[1] -= 2.0
             pos[2] += 0.5
 
+            if self.hologram_y_offset:
+                pos[1] += self.hologram_y_offset
+
             holograms.append(self.send_status_hologram(pos))
-            pos[1] -= 0.3
-            holograms.append(self.send_status_hologram(pos))
+
+            if self.hologram_lines_separate:
+                pos[1] -= 0.3
+                holograms.append(self.send_status_hologram(pos))
 
             self.status_holograms[hologram.server].append(holograms)
 
     def send_status_hologram_texts(self):
         for server, holograms in self.status_holograms.items():
-            lines = self.protocol.factory.server_statuses.get(server, None)
+            if self.hologram_lines_separate:
+                lines = self.protocol.factory.server_statuses.get(server, {}).get('separate', None)
+            else:
+                lines = self.protocol.factory.server_statuses.get(server, {}).get('combined', None)
 
             if self.protocol.debug_mode is True:
-                lines = ["Line 1 for " + server + " server status", "Line 2 for " + server + " server status"]
+                if self.hologram_lines_separate:
+                    lines = ["Line 1 for " + server + " server status", "Line 2 for " + server + " server status"]
+                else:
+                    lines = ["Line 1 for " + server + " server status\n\nLine 2 for " + server + " server status"]
 
             if lines is not None:
                 for hologram in holograms:
                     self.send_entity_metadata(hologram[0], self.get_status_hologram_metadata(lines[0]))
-                    self.send_entity_metadata(hologram[1], self.get_status_hologram_metadata(lines[1]))
+
+                    if self.hologram_lines_separate:
+                        self.send_entity_metadata(hologram[1], self.get_status_hologram_metadata(lines[1]))
 
     def send_debug_markers(self):
         spawn = self.current_world.spawn

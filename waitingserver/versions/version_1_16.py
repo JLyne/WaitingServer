@@ -9,8 +9,8 @@ class Version_1_16(Version_1_15):
     protocol_version = 736
     map_format = '1.16'
 
-    item_frame_id = 32
-    map_item_id = 733
+    map_entity_id = 32 # Item frame
+    map_item_id = 733 # Filled map
 
     def __init__(self, protocol: Protocol, bedrock: False):
         super(Version_1_16, self).__init__(protocol, bedrock)

@@ -12,8 +12,8 @@ class Version_1_19_3(Version_1_19_1):
     chunk_format = '1.19.3'
     tag_format = '1.19.3'
 
-    item_frame_id = 36
-    map_item_id = 914
+    map_entity_id = 36 # Glow item frame
+    map_item_id = 914 # Filled map
 
     def send_spawn(self, effects=False):
         spawn = self.current_world.spawn

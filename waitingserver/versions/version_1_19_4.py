@@ -1,3 +1,7 @@
+from typing import Dict, Tuple, Union
+
+from quarry.types import chat
+
 from waitingserver.versions import Version_1_19_3
 
 
@@ -6,6 +10,9 @@ class Version_1_19_4(Version_1_19_3):
     chunk_format = '1.19.4'
     tag_format = '1.19.4'
 
+    hologram_entity_id = 100 # Text display
+    hologram_y_offset = -.6 # Text display is vertically aligned to the bottom, so move it down a bit to center a typical line count
+    hologram_lines_separate = False # Text display handles newlines, so only need one entity
     map_entity_id = 43 # Glow item frame
     map_item_id = 937 # Filled map
 
@@ -24,3 +31,11 @@ class Version_1_19_4(Version_1_19_3):
 
         if effects is True:
             self.send_spawn_effect()
+
+    @staticmethod
+    def get_status_hologram_metadata(text: chat.Message = "") -> Dict[Tuple[int, int], Union[str, int, bool]]:
+        return {
+            (5, 22): text,  # Text (index 22, type 6 (chat))
+            (1, 23): 150, # Max width
+            (0, 14): 3,
+        }

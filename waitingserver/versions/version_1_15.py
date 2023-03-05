@@ -16,9 +16,11 @@ class Version_1_15(Version):
     chunk_format = '1.15'
     map_format = '1.12'
 
-    armor_stand_id = 1
-    item_frame_id = 36
-    map_item_id = 671
+    hologram_entity_id = 1 # Armor stand
+    hologram_y_offset = -2.0 # Offset position by armor stand height
+    hologram_lines_separate = True # Armor stand names don't handle newlines, so need separate entities for each line
+    map_entity_id = 36 # Item frame
+    map_item_id = 671 # Filled map
 
     def __init__(self, protocol: Protocol, bedrock: False):
         super(Version_1_15, self).__init__(protocol, bedrock)
@@ -232,7 +234,7 @@ class Version_1_15(Version):
         self.protocol.send_packet("spawn_object",
                                   self.protocol.buff_type.pack_varint(self.last_entity_id),  # Entity id
                                   self.protocol.buff_type.pack_uuid(UUID.random()),  # Entity UUID
-                                  self.protocol.buff_type.pack_varint(self.item_frame_id),  # Item frame
+                                  self.protocol.buff_type.pack_varint(self.map_entity_id),  # Item frame
                                   self.protocol.buff_type.pack("dddbbihhh",
                                                                pos[0], pos[1], pos[2],  # Position
                                                                0, 0, int(direction),  # Rotation, facing
@@ -278,7 +280,7 @@ class Version_1_15(Version):
         self.protocol.send_packet("spawn_mob",
                                   self.protocol.buff_type.pack_varint(self.last_entity_id),  # Entity id
                                   self.protocol.buff_type.pack_uuid(UUID.random()),  # Entity UUID
-                                  self.protocol.buff_type.pack_varint(self.armor_stand_id),  # Item frame
+                                  self.protocol.buff_type.pack_varint(self.hologram_entity_id),  # Item frame
                                   self.protocol.buff_type.pack("dddbbbhhh",
                                                                pos[0], pos[1], pos[2],  # Position
                                                                0, 0, 0,  # Rotation, head facing

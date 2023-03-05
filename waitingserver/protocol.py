@@ -334,10 +334,17 @@ class Protocol(ServerProtocol):
         self.factory.server_statuses = {}
 
         for server, status in server_statuses.items():
-            lines = status.get("lines", None)
+            separate_lines = status.get("separateLines", None)
+            combined_lines = status.get("combinedLines", None)
 
-            if lines is not None and len(lines) == 2:
-                self.factory.server_statuses[server] = [chat.Message(json.loads(lines[0])), chat.Message(json.loads(lines[1]))]
+            self.factory.server_statuses[server] = {
+                'combined': chat.Message(combined_lines),
+                'separate': None
+            }
+
+            if separate_lines is not None and len(separate_lines) == 2:
+                self.factory.server_statuses[server]['separate'] = [
+                    chat.Message(json.loads(separate_lines[0])), chat.Message(json.loads(separate_lines[1]))]
 
         for player in self.factory.players:
             if player.protocol_mode == "play":
