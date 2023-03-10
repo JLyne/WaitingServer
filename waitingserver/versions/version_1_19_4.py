@@ -6,7 +6,7 @@ from waitingserver.versions import Version_1_19_3
 
 
 class Version_1_19_4(Version_1_19_3):
-    protocol_version = 1073741949
+    protocol_version = 762
     chunk_format = '1.19.4'
     tag_format = '1.19.4'
 
