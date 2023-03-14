@@ -338,7 +338,7 @@ class Protocol(ServerProtocol):
             combined_lines = status.get("combinedLines", None)
 
             self.factory.server_statuses[server] = {
-                'combined': chat.Message(combined_lines),
+                'combined': chat.Message(json.loads(combined_lines)),
                 'separate': None
             }
 

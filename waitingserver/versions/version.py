@@ -25,7 +25,6 @@ class Version(object, metaclass=abc.ABCMeta):
     map_format = None # Subfolder to use when sending maps for a world
 
     hologram_entity_id = None # Entity ID to use when creating holograms
-    hologram_lines_separate = True # Whether separate hologram entities are needed for each line of text
     hologram_y_offset = None # Vertical offset for hologram position
     map_entity_id = None # Entity ID to use when creating maps
     map_item_id = None # Item ID to use for the maps themselves
@@ -42,6 +41,7 @@ class Version(object, metaclass=abc.ABCMeta):
         self.last_command = 0
 
         self.is_bedrock = bedrock
+        self.hologram_lines_separate = True # Whether separate hologram entities are needed for each line of text
 
         self.last_entity_id = 1000
         self.status_holograms = dict()
@@ -252,10 +252,13 @@ class Version(object, metaclass=abc.ABCMeta):
 
             if lines is not None:
                 for hologram in holograms:
-                    self.send_entity_metadata(hologram[0], self.get_status_hologram_metadata(lines[0]))
 
                     if self.hologram_lines_separate:
+                        self.send_entity_metadata(hologram[0], self.get_status_hologram_metadata(lines[0]))
                         self.send_entity_metadata(hologram[1], self.get_status_hologram_metadata(lines[1]))
+                    else:
+                        self.send_entity_metadata(hologram[0], self.get_status_hologram_metadata(lines))
+
 
     def send_debug_markers(self):
         spawn = self.current_world.spawn

@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Union
+from typing import Dict, Tuple, Union, Protocol
 
 from quarry.types import chat
 
@@ -12,9 +12,13 @@ class Version_1_19_4(Version_1_19_3):
 
     hologram_entity_id = 100 # Text display
     hologram_y_offset = -.6 # Text display is vertically aligned to the bottom, so move it down a bit to center a typical line count
-    hologram_lines_separate = False # Text display handles newlines, so only need one entity
     map_entity_id = 43 # Glow item frame
     map_item_id = 937 # Filled map
+
+    def __init__(self, protocol: Protocol, bedrock: False):
+        super(Version_1_19_4, self).__init__(protocol, bedrock)
+
+        self.hologram_lines_separate = False # Text display handles newlines, so only need one entity
 
     def send_spawn(self, effects=False):
         spawn = self.current_world.spawn
