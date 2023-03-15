@@ -395,9 +395,8 @@ class Version(object, metaclass=abc.ABCMeta):
     def send_status_hologram(self, pos: List[float]):
         raise NotImplementedError('send_status_hologram must be defined to use this base class')
 
-    @staticmethod
     @abc.abstractmethod
-    def get_status_hologram_metadata(text: chat.Message = None):
+    def get_status_hologram_metadata(self, text: chat.Message = None):
         raise NotImplementedError('get_status_hologram_metadata must be defined to use this base class')
 
     @abc.abstractmethod

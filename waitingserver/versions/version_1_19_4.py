@@ -18,7 +18,7 @@ class Version_1_19_4(Version_1_19_3):
     def __init__(self, protocol: Protocol, bedrock: False):
         super(Version_1_19_4, self).__init__(protocol, bedrock)
 
-        self.hologram_lines_separate = False # Text display handles newlines, so only need one entity
+        self.hologram_lines_separate = bedrock # Text display handles newlines, so only need one entity
 
     def send_spawn(self, effects=False):
         spawn = self.current_world.spawn
@@ -36,8 +36,10 @@ class Version_1_19_4(Version_1_19_3):
         if effects is True:
             self.send_spawn_effect()
 
-    @staticmethod
-    def get_status_hologram_metadata(text: chat.Message = "") -> Dict[Tuple[int, int], Union[str, int, bool]]:
+    def get_status_hologram_metadata(self, text: chat.Message = "") -> Dict[Tuple[int, int], Union[str, int, bool]]:
+        if self.is_bedrock:
+            return super().get_status_hologram_metadata(text)
+
         return {
             (5, 22): text,  # Text (index 22, type 6 (chat))
             (1, 23): 150, # Max width
