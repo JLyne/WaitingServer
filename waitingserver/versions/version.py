@@ -246,9 +246,12 @@ class Version(object, metaclass=abc.ABCMeta):
 
             if self.protocol.debug_mode is True:
                 if self.hologram_lines_separate:
-                    lines = ["Line 1 for " + server + " server status", "Line 2 for " + server + " server status"]
+                    lines = [
+                        chat.Message("Line 1 for " + server + " server status"),
+                        chat.Message("Line 2 for " + server + " server status")
+                    ]
                 else:
-                    lines = ["Line 1 for " + server + " server status\n\nLine 2 for " + server + " server status"]
+                    lines = chat.Message("Line 1 for " + server + " server status\n\nLine 2 for " + server + " server status")
 
             if lines is not None:
                 for hologram in holograms:
