@@ -296,7 +296,8 @@ class Version_1_15(Version):
                                   self.protocol.buff_type.pack_varint(entity_id),
                                   self.protocol.buff_type.pack_entity_metadata(metadata))
 
-    def get_status_hologram_metadata(self, text: chat.Message = "") -> Dict[Tuple[int, int], Union[str, int, bool]]:
+    @staticmethod
+    def get_status_hologram_metadata(text: chat.Message = "") -> Dict[Tuple[int, int], Union[str, int, bool]]:
         return {
             (0, 0): 0x20,  # Custom name (index 0, type 0 (byte))
             (7, 5): True,  # No gravity (index 5, type 7 (boolean))

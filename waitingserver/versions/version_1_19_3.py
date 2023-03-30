@@ -55,7 +55,8 @@ class Version_1_19_3(Version_1_19_1):
                                                                int(spawn.get('y')),
                                                                int(spawn.get('z')), 100000.0, 1, 0))  # Extra byte for seed
 
-    def get_status_hologram_metadata(self, text: chat.Message = "") -> Dict[Tuple[int, int], Union[str, int, bool]]:
+    @staticmethod
+    def get_status_hologram_metadata(text: chat.Message = "") -> Dict[Tuple[int, int], Union[str, int, bool]]:
         return {
             (0, 0): 0x20,  # Custom name (index 0, type 0 (byte))
             (8, 5): True,  # No gravity (index 5, type 8 (boolean))
