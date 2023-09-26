@@ -35,8 +35,8 @@ class Version_1_20(Version_1_19_4):
                                   self.protocol.buff_type.pack_varint(7),
                                   self.protocol.buff_type.pack_varint(0),
                                   self.protocol.buff_type.pack("????", False, True, False, False),
-                                  self.protocol.buff_type.pack_varint(0),  # Portal cooldown
-                                  self.protocol.buff_type.pack("?", False))
+                                  self.protocol.buff_type.pack("?", False),
+                                  self.protocol.buff_type.pack_varint(0))  # Portal cooldown
 
     def send_reset_world(self):
         data = [
