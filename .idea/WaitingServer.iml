@@ -13,6 +13,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">
-    <option name="requirementsPath" value="C:\Users\jim\PycharmProjects\WaitingServer\waitingserver\requirements.txt" />
+    <option name="requirementsPath" value="$MODULE_DIR$/waitingserver/requirements.txt" />
+    <option name="removeUnused" value="true" />
   </component>
 </module>
