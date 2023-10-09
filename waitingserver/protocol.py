@@ -156,6 +156,20 @@ class Protocol(ServerProtocol):
         if self.protocol_version < 764:
             self.player_joined()
 
+    # 1.20.2+ send dimension codec during configuration phase
+    def packet_login_acknowledged(self, buff):
+        dimension_codec = self.version.get_dimension_codec()
+
+        if dimension_codec is None:
+            super().packet_login_acknowledged(buff)
+            return
+
+        self.switch_protocol_mode("configuration")
+        self.send_packet("registry_data", self.buff_type.pack_nbt(dimension_codec))  # Required to get past Joining World screen
+        self.send_packet("finish_configuration")  # Tell client to leave configuration mode
+
+        buff.discard()
+
     def player_joined(self):
         if self.uuid is None:
             self.uuid = UUID.from_offline_player(self.display_name)

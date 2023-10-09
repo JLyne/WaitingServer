@@ -47,6 +47,12 @@ class Version_1_16_2(Version_1_16):
                 effects.value['sky_color'].value = effects.value['fog_color'].value = \
                     effects.value['water_color'].value = effects.value['water_fog_color'].value = 0
 
+    def get_dimension_codec(self):
+        if self.dimension_codec is None:
+            self.init_dimension_codec()
+
+        return self.dimension_codec
+
     def get_dimension_settings(self, name: str):
         settings = {
             'piglin_safe': TagByte(0),
