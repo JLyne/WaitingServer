@@ -9,11 +9,13 @@ from quarry.types import chat
 from quarry.types.buffer import Buffer
 from typing import List, Dict, Tuple, Union
 
+from quarry.types.chat import Message
+
 from waitingserver.Map import Map, MapPart
 from waitingserver.direction import Direction
 from waitingserver.protocol import Protocol
 from waitingserver.config import get_default_world, worlds, maps
-from waitingserver.voting import entry_json, entry_navigation_json
+from waitingserver.voting import entry_component, entry_navigation_component
 
 parent_folder = Path(__file__).parent.parent
 
@@ -125,7 +127,7 @@ class Version(object, metaclass=abc.ABCMeta):
             if now - self.last_command < 0.5:
                 return
 
-            self.send_chat_message(self.current_world.credit_json())
+            self.send_chat_message(self.current_world.credit_component())
 
         elif self.protocol.voting_mode is True:
             if command == "prev":
@@ -175,14 +177,14 @@ class Version(object, metaclass=abc.ABCMeta):
 
         # Credits and entry navigation
         if self.protocol.voting_mode:
-            self.send_chat_message(entry_json(
+            self.send_chat_message(entry_component(
                 worlds[self.chunk_format].index(self.current_world) + 1,
                 len(worlds[self.chunk_format])))
 
-            self.send_chat_message(self.current_world.credit_json())
+            self.send_chat_message(self.current_world.credit_component())
 
             if not self.is_bedrock:
-                self.send_chat_message(entry_navigation_json(self.protocol.uuid, self.protocol.voting_secret))
+                self.send_chat_message(entry_navigation_component(self.protocol.uuid, self.protocol.voting_secret))
 
     def send_maps(self):
         if self.map_format is None:
@@ -370,7 +372,7 @@ class Version(object, metaclass=abc.ABCMeta):
         raise NotImplementedError('send_commands must be defined to use this base class')
 
     @abc.abstractmethod
-    def send_chat_message(self, message):
+    def send_chat_message(self, message: Message):
         raise NotImplementedError('send_chat_message must be defined to use this base class')
 
     @abc.abstractmethod

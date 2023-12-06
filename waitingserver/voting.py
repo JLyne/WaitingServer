@@ -1,11 +1,11 @@
-import json
 import hmac
 
+from quarry.types.chat import Message
 from quarry.types.uuid import UUID
 
 
-def entry_json(current, total):
-    return json.dumps({
+def entry_component(current, total):
+    return Message({
             "text": '\n\n\nEntry ',
             "bold": True,
             "color": "gold",
@@ -22,13 +22,13 @@ def entry_json(current, total):
         })
 
 
-def entry_navigation_json(uuid: UUID, secret):
+def entry_navigation_component(uuid: UUID, secret):
     from waitingserver.config import voting_url
 
     token = hmac.new(key=str.encode(secret), msg=uuid.to_bytes(), digestmod="sha256")
     url = voting_url.format(uuid=uuid.to_hex(False), token=token.hexdigest())
 
-    return json.dumps({
+    return Message({
             "text": "\n",
             "color": "gold",
             "extra": [

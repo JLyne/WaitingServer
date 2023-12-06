@@ -1,6 +1,5 @@
-import json
-
 from quarry.types import chat
+from quarry.types.chat import Message
 from quarry.types.nbt import TagRoot, TagCompound, TagInt
 from quarry.types.uuid import UUID
 from typing import List, Dict, Tuple, Union
@@ -188,17 +187,15 @@ class Version_1_15(Version):
     def send_commands(self):
         self.protocol.send_packet('declare_commands', self.protocol.buff_type.pack_commands(self.commands))
 
-    def send_chat_message(self, message):
+    def send_chat_message(self, message: Message):
         self.protocol.send_packet('chat_message',
                                   self.protocol.buff_type.pack_string(message),
                                   self.protocol.buff_type.pack("b", 1))
 
     def send_tablist(self):
         self.protocol.send_packet("player_list_header_footer",
-                                  self.protocol.buff_type.pack_string(json.dumps({
-                                      "text": "\n\ue300\n"
-                                  })),
-                                  self.protocol.buff_type.pack_string(json.dumps({"translate": ""})))
+                                  self.protocol.buff_type.pack_chat("\n\ue300\n"),
+                                  self.protocol.buff_type.pack_chat(""))
 
         self.protocol.send_packet("player_list_item",
                                   self.protocol.buff_type.pack_varint(0),

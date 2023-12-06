@@ -1,4 +1,3 @@
-import json
 from typing import List
 
 from quarry.types.nbt import TagInt
@@ -98,10 +97,8 @@ class Version_1_19(Version_1_18_2):
 
     def send_tablist(self):
         self.protocol.send_packet("player_list_header_footer",
-                                  self.protocol.buff_type.pack_string(json.dumps({
-                                      "text": "\n\ue300\n"
-                                  })),
-                                  self.protocol.buff_type.pack_string(json.dumps({"translate": ""})))
+                                  self.protocol.buff_type.pack_chat("\n\ue300\n"),
+                                  self.protocol.buff_type.pack_chat(""))
 
         self.protocol.send_packet("player_list_item",
                                   self.protocol.buff_type.pack_varint(0),
@@ -116,6 +113,6 @@ class Version_1_19(Version_1_18_2):
     def send_chat_message(self, message):
         # Use system chat for all messages
         self.protocol.send_packet('system_message',
-                                  self.protocol.buff_type.pack_string(message),
+                                  self.protocol.buff_type.pack_chat(message),
                                   self.protocol.buff_type.pack("b", 1))
 

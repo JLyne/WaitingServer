@@ -1,11 +1,12 @@
 import glob
-import json
 import os
 import re
 import math
 
 from quarry.types.buffer import Buffer
 from typing import List
+
+from quarry.types.chat import Message
 
 from waitingserver.direction import Direction
 
@@ -135,9 +136,9 @@ class World:
 
 		return pos1x <= x <= pos2x and pos1y <= y <= pos2y and pos1z <= z <= pos2z
 
-	def credit_json(self):
+	def credit_component(self):
 		if len(self.contributors) > 0:
-			return json.dumps({
+			return Message({
 				"text": "\"" + self.name + "\"\n",
 				"italic": True,
 				"color": "green",
@@ -159,7 +160,7 @@ class World:
 					}
 				]})
 		else:
-			return json.dumps({
+			return Message({
 				"text": "\"" + self.name + "\"\n",
 				"italic": True,
 				"color": "green",

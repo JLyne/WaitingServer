@@ -1,4 +1,3 @@
-import json
 from typing import Dict, Union, Tuple
 
 from quarry.types import chat
@@ -25,10 +24,8 @@ class Version_1_19_3(Version_1_19_1):
 
     def send_tablist(self):
         self.protocol.send_packet("player_list_header_footer",
-                                  self.protocol.buff_type.pack_string(json.dumps({
-                                      "text": "\n\ue300\n"
-                                  })),
-                                  self.protocol.buff_type.pack_string(json.dumps({"translate": ""})))
+                                  self.protocol.buff_type.pack_chat("\n\ue300\n"),
+                                  self.protocol.buff_type.pack_chat(""))
 
         self.protocol.send_packet("player_list_item",
                                   self.protocol.buff_type.pack('B', 63),
