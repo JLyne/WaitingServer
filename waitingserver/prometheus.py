@@ -7,7 +7,7 @@ players_online = Gauge('mc_players_online_total', 'Number of players connected t
 
 
 def init_prometheus(host, port):
-    start_http_server(host, port)
+    start_http_server(port, host)
     logging.getLogger(__name__).info(f'Prometheus client started on port {host}:{port}')
 
 
