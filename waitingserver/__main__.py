@@ -30,8 +30,6 @@ parser.add_argument("-d", "--debug", action='store_true', help="Shows debug mark
 
 args = parser.parse_args()
 
-metrics_port = args.metrics
-
 if args.bungeecord is True and args.velocity is True:
     logger.error("Cannot use both bungeecord and velocity forwarding at the same time.")
     exit(1)
@@ -53,8 +51,8 @@ server_factory.server_statuses = dict()
 load_config()
 build_versions()
 
-if metrics_port is not None:
-    init_prometheus(metrics_port)
+if args.metrics is not None:
+    init_prometheus(args.host, args.metrics)
 
 import waitingserver.config
 Protocol.debug_mode = args.debug
