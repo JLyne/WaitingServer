@@ -43,7 +43,6 @@ class Version(object, metaclass=abc.ABCMeta):
         self.last_command = 0
 
         self.is_bedrock = bedrock
-        self.hologram_lines_separate = True # Whether separate hologram entities are needed for each line of text
 
         self.last_entity_id = 1000
         self.status_holograms = dict()
@@ -233,37 +232,18 @@ class Version(object, metaclass=abc.ABCMeta):
 
             holograms.append(self.send_status_hologram(pos))
 
-            if self.hologram_lines_separate:
-                pos[1] -= 0.3
-                holograms.append(self.send_status_hologram(pos))
-
             self.status_holograms[hologram.server].append(holograms)
 
     def send_status_hologram_texts(self):
         for server, holograms in self.status_holograms.items():
-            if self.hologram_lines_separate:
-                lines = self.protocol.factory.server_statuses.get(server, {}).get('separate', None)
-            else:
-                lines = self.protocol.factory.server_statuses.get(server, {}).get('combined', None)
+            lines = self.protocol.factory.server_statuses.get(server, None)
 
             if self.protocol.debug_mode is True:
-                if self.hologram_lines_separate:
-                    lines = [
-                        chat.Message("Line 1 for " + server + " server status"),
-                        chat.Message("Line 2 for " + server + " server status")
-                    ]
-                else:
-                    lines = chat.Message("Line 1 for " + server + " server status\n\nLine 2 for " + server + " server status")
+                lines = chat.Message("Line 1 for " + server + " server status\n\nLine 2 for " + server + " server status")
 
             if lines is not None:
                 for hologram in holograms:
-
-                    if self.hologram_lines_separate:
-                        self.send_entity_metadata(hologram[0], self.get_status_hologram_metadata(lines[0]))
-                        self.send_entity_metadata(hologram[1], self.get_status_hologram_metadata(lines[1]))
-                    else:
-                        self.send_entity_metadata(hologram[0], self.get_status_hologram_metadata(lines))
-
+                    self.send_entity_metadata(hologram[0], self.get_status_hologram_metadata(lines))
 
     def send_debug_markers(self):
         spawn = self.current_world.spawn

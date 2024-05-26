@@ -153,9 +153,6 @@ class Protocol(ServerProtocol):
         self.send_login_success()
         logger.info("Velocity: {} {}".format(self.display_name, self.uuid))
 
-        if self.protocol_version < 764:
-            self.player_joined()
-
     # 1.20.2+ send dimension codec during configuration phase
     def packet_login_acknowledged(self, buff):
         dimension_codec = self.version.get_dimension_codec()
@@ -224,17 +221,8 @@ class Protocol(ServerProtocol):
         self.factory.server_statuses = {}
 
         for server, status in server_statuses.items():
-            separate_lines = status.get("separateLines", None)
             combined_lines = status.get("combinedLines", None)
-
-            self.factory.server_statuses[server] = {
-                'combined': chat.Message(json.loads(combined_lines)),
-                'separate': None
-            }
-
-            if separate_lines is not None and len(separate_lines) == 2:
-                self.factory.server_statuses[server]['separate'] = [
-                    chat.Message(json.loads(separate_lines[0])), chat.Message(json.loads(separate_lines[1]))]
+            self.factory.server_statuses[server] = chat.Message(json.loads(combined_lines))
 
         for player in self.factory.players:
             if player.protocol_mode == "play":
