@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import Protocol, List, Dict, Tuple, Union
+from typing import List, Dict, Tuple, Union
 
 from quarry.data.data_packs import vanilla_data_packs, pack_formats
 from quarry.types.chat import Message
@@ -10,6 +10,7 @@ from quarry.types.uuid import UUID
 
 from waitingserver.Map import MapPart
 from waitingserver.direction import Direction
+from waitingserver.protocol import Protocol
 from waitingserver.versions import Version
 
 
