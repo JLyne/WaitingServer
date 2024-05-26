@@ -1,6 +1,7 @@
+from copy import deepcopy
 from typing import Protocol, List, Dict, Tuple, Union
 
-from quarry.data.data_packs import data_packs
+from quarry.data.data_packs import vanilla_data_packs, pack_formats
 from quarry.types.chat import Message
 from quarry.types.data_pack import DataPack
 from quarry.types.namespaced_key import NamespacedKey
@@ -19,9 +20,11 @@ class Version_1_20_3(Version):
     map_format = '1.17'
 
     hologram_entity_id = 101  # Text display
-    hologram_y_offset = -2.0  # Offset position by armor stand height
+    hologram_y_offset = -1.0  # Offset position by armor stand height
     map_entity_id = 44  # Glow item frame
     map_item_id = 979  # Filled map
+
+    data_pack: DataPack = None  # Data pack to apply
 
     def __init__(self, protocol: Protocol, bedrock: False):
         super(Version_1_20_3, self).__init__(protocol, bedrock)
@@ -95,43 +98,32 @@ class Version_1_20_3(Version):
                 "suggestions": None
             }
 
-    def init_dimension_codec(self):
-        self.dimension_codec = data_packs[self.protocol_version]
+    def get_data_pack(self):
+        if self.data_pack:
+            return self.data_pack
 
-        self.dimension_codec.body.value['minecraft:dimension_type'] = TagCompound({
-            'type': TagString("minecraft:dimension_type"),
-            'value': TagList([
-                TagCompound({
-                    'name': TagString("minecraft:overworld"),
-                    'id': TagInt(0),
-                    'element': TagCompound(self.get_dimension_settings("overworld")),
-                }),
-                TagCompound({
-                    'name': TagString("minecraft:nether"),
-                    'id': TagInt(1),
-                    'element': TagCompound(self.get_dimension_settings("nether")),
-                }),
-                TagCompound({
-                    'name': TagString("minecraft:the_end"),
-                    'id': TagInt(2),
-                    'element': TagCompound(self.get_dimension_settings("the_end")),
-                })
-            ]),
-        })
+        vanilla_pack = vanilla_data_packs[self.protocol_version]
 
         # Make void sky and fog black
-        for biome in self.dimension_codec.body.value['minecraft:worldgen/biome'].value['value'].value:
-            if biome.value['name'].value == "minecraft:the_void":
-                effects = biome.value['element'].value['effects']
+        void = deepcopy(vanilla_pack.contents[NamespacedKey.minecraft('worldgen/biome')]
+                        .get(NamespacedKey.minecraft('the_void')))
 
-                effects.value['sky_color'].value = effects.value['fog_color'].value = \
-                    effects.value['water_color'].value = effects.value['water_fog_color'].value = 0
+        effects = void['effects']
+        effects['sky_color'] = effects['fog_color'] = effects['water_color'] = effects['water_fog_color'] = 2147483647
 
-    def get_dimension_codec(self):
-        if self.dimension_codec is None:
-            self.init_dimension_codec()
+        contents = {
+            NamespacedKey.minecraft('dimension_type'): {
+                NamespacedKey.minecraft('overworld'): self.get_dimension_settings("overworld"),
+                NamespacedKey.minecraft('nether'): self.get_dimension_settings("nether"),
+                NamespacedKey.minecraft('the_end'): self.get_dimension_settings("the_end"),
+            },
+            NamespacedKey.minecraft('worldgen/biome'): {
+                NamespacedKey.minecraft('the_void'): void
+            }
+        }
 
-        return self.dimension_codec
+        self.data_pack = DataPack(NamespacedKey("rtgame", "waitingserver"), "1.0", pack_formats[self.protocol_version], contents)
+        return self.data_pack
 
     def get_dimension_settings(self, name: str):
         return {

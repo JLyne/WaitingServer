@@ -7,9 +7,10 @@ from pathlib import Path
 
 from quarry.types import chat
 from quarry.types.buffer import Buffer
-from typing import List, Dict, Tuple, Union
+from typing import List, Dict, Tuple, Union, Optional
 
 from quarry.types.chat import Message
+from quarry.types.data_pack import DataPack
 
 from waitingserver.Map import Map, MapPart
 from waitingserver.direction import Direction
@@ -304,7 +305,7 @@ class Version(object, metaclass=abc.ABCMeta):
 
         return cls.tag_packet
 
-    def get_dimension_codec(self):
+    def get_data_pack(self) -> Optional[DataPack]:
         return None
 
     @abc.abstractmethod

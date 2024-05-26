@@ -47,6 +47,9 @@ server_factory.motd = "Waiting Server"
 server_factory.online_mode = False
 server_factory.compression_threshold = 1500
 server_factory.server_statuses = dict()
+server_factory.bungee_forwarding = args.bungeecord
+server_factory.velocity_forwarding = args.velocity is not None
+server_factory.velocity_forwarding_secret = args.velocity
 
 load_config()
 build_versions()
@@ -58,9 +61,6 @@ import waitingserver.config
 Protocol.debug_mode = args.debug
 Protocol.voting_mode = args.voting is not None
 Protocol.voting_secret = args.voting
-Protocol.bungee_forwarding = args.bungeecord
-Protocol.velocity_forwarding = args.velocity is not None
-Protocol.velocity_forwarding_secret = args.velocity
 Protocol.status_secret = waitingserver.config.status_secret
 
 server_factory.listen(args.host, args.port)
