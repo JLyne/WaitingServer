@@ -21,7 +21,7 @@ class Version_1_20_3(Version):
     map_format = '1.17'
 
     hologram_entity_id = 101  # Text display
-    hologram_y_offset = -1.0  # Offset position by armor stand height
+    hologram_y_offset = 0  # Offset position by armor stand height
     map_entity_id = 44  # Glow item frame
     map_item_id = 979  # Filled map
 
