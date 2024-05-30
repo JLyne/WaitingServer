@@ -41,8 +41,6 @@ class Version_1_20_5(Version_1_20_3):
     def send_respawn(self):
         dimension_registry = self.protocol.data_packs.get_registry(NamespacedKey.minecraft('dimension_type'))
         dimension = dimension_registry.get(self.current_world.dimension)
-        print(self.current_world.name)
-        print(self.current_world.dimension)
 
         self.protocol.send_packet("respawn",
                                   self.protocol.buff_type.pack_varint(dimension['id']), # Now varint
