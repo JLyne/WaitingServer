@@ -196,7 +196,7 @@ class Version_1_20_3(Version):
 
     def send_respawn(self):
         self.protocol.send_packet("respawn",
-                                  self.protocol.buff_type.pack_string(self.current_world.dimension),
+                                  self.protocol.buff_type.pack_string(str(self.current_world.dimension)),
                                   self.protocol.buff_type.pack_string("rtgame:reset"),
                                   self.protocol.buff_type.pack("qBB", 0, 1, 1),
                                   self.protocol.buff_type.pack("???", False, False, False),
@@ -204,7 +204,7 @@ class Version_1_20_3(Version):
                                   self.protocol.buff_type.pack("b", 0))
 
         self.protocol.send_packet("respawn",
-                                  self.protocol.buff_type.pack_string(self.current_world.dimension),
+                                  self.protocol.buff_type.pack_string(str(self.current_world.dimension)),
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),
                                   self.protocol.buff_type.pack("qBB", 0, 1, 1),
                                   self.protocol.buff_type.pack("???", False, False, False),
