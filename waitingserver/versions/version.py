@@ -155,6 +155,14 @@ class Version(object, metaclass=abc.ABCMeta):
         if self.is_bedrock:
             self.send_reset_world()
 
+            # Fixes client getting stuck when crossing 0
+            self.protocol.send_packet('initialize_world_border',
+                                  self.protocol.buff_type.pack('dddd', 500, 500, 500, 500),
+                                  self.protocol.buff_type.pack_varint(0),
+                                  self.protocol.buff_type.pack_varint(29999984),
+                                  self.protocol.buff_type.pack_varint(29999984),
+                                  self.protocol.buff_type.pack_varint(1))
+
         # Chunk packets
         for packet in self.current_world.packets:
             self.protocol.send_packet(packet.type, packet.data)
