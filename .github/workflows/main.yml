@@ -1,4 +1,4 @@
-name: Package Application with Pyinstaller#
+name: Package Application with Pyinstaller
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Package Application
-      uses: action-python/pyinstaller-py3.8@amd64
+      uses: action-python/pyinstaller-py3.10@amd64
       with:
         path: waitingserver
         
@@ -46,7 +46,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Package Application
-      uses: action-python/pyinstaller-py3.8@win64
+      uses: action-python/pyinstaller-py3.10@win64
       with:
         path: /github/workspace/waitingserver
         
