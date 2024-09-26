@@ -56,7 +56,7 @@ jobs:
         requirements: 'waitingserver/requirements.txt'
         
     - name: copy file
-      uses: canastro/copy-file-action@master
+      uses: Lyoko-Jeremie/js-copy-github-action@master
       with:
         source: dist/server.exe
         target: server.exe
