@@ -24,7 +24,7 @@ jobs:
     - name: copy file
       uses: canastro/copy-file-action@master
       with:
-        source: WaitingServer/dist/server
+        source: dist/server
         target: server
 
     - name: Tar packets
@@ -58,7 +58,7 @@ jobs:
     - name: copy file
       uses: canastro/copy-file-action@master
       with:
-        source: WaitingServer/dist/server.exe
+        source: dist/server.exe
         target: server.exe
 
     - name: Tar packets
