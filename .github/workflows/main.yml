@@ -20,12 +20,11 @@ jobs:
         python_ver: '3.8'
         spec: 'waitingserver/server.spec'
         requirements: 'waitingserver/requirements.txt'
-        options: --onefile 
         
     - name: copy file
       uses: canastro/copy-file-action@master
       with:
-        source: waitingserver/dist/server
+        source: WaitingServer/dist/server
         target: server
 
     - name: Tar packets
@@ -55,12 +54,11 @@ jobs:
         python_ver: '3.8'
         spec: 'waitingserver/server.spec'
         requirements: 'waitingserver/requirements.txt'
-        options: --onefile 
         
     - name: copy file
       uses: canastro/copy-file-action@master
       with:
-        source: waitingserver/dist/server.exe
+        source: WaitingServer/dist/server.exe
         target: server.exe
 
     - name: Tar packets
