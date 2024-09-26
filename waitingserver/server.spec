@@ -2,15 +2,22 @@
 from os.path import join, dirname, abspath, split
 from os import sep
 import glob
+import quarry
 
 block_cipher = None
+
+quarry_data = os.path.join(split(quarry.__file__)[0], 'data')
 
 datas = [
     ( 'data/tags/*.bin', 'waitingserver/data/tags' )
 ]
 
+datas.extend((file, dirname(file).split("site-packages")[1][1:]) for file in glob.iglob(join(quarry_data,"**{}*.csv".format(sep)), recursive=True))
+datas.extend((file, dirname(file).split("site-packages")[1][1:]) for file in glob.iglob(join(quarry_data,"**{}*.nbt".format(sep)), recursive=True))
+
 a = Analysis(['__main__.py'],
              pathex=['.', '../venv/Lib/site-packages'],
+             #pathex=['.', '../venv-linux/Lib/python3.8/site-packages'],
              binaries=[],
              datas=datas,
              hiddenimports=[],
