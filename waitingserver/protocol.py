@@ -30,9 +30,9 @@ class Protocol(ServerProtocol):
         self.logger.addHandler(console_handler)
         self.logger.addHandler(file_handler)
 
-    def packet_handshake(self, buff):
+    def packet_intention(self, buff):
         buff2 = deepcopy(buff)
-        super().packet_handshake(buff)
+        super().packet_intention(buff)
 
         buff2.unpack_varint()
         p_connect_host = buff2.unpack_string()
@@ -77,20 +77,20 @@ class Protocol(ServerProtocol):
 
         set_players_online(len(self.factory.players))
 
-    def packet_player_position(self, buff):
-        self.version.packet_player_position(buff)
+    def packet_move_player_pos(self, buff):
+        self.version.packet_move_player_pos(buff)
 
-    def packet_player_position_and_look(self, buff):
-        self.version.packet_player_position_and_look(buff)
+    def packet_move_player_pos_rot(self, buff):
+        self.version.packet_move_player_pos_rot(buff)
 
-    def packet_chat_message(self, buff):
-        self.version.packet_chat_message(buff)
+    def packet_chat(self, buff):
+        self.version.packet_chat(buff)
 
     # 1.19+
     def packet_chat_command(self, buff):
         self.version.packet_chat_command(buff)
 
-    def packet_plugin_message(self, buff):
+    def packet_custom_payload(self, buff):
         channel = buff.unpack_string()
         data = buff.read()
 
@@ -120,7 +120,7 @@ class Protocol(ServerProtocol):
             self.factory.server_statuses[server] = chat.Message(json.loads(combined_lines))
 
         for player in self.factory.players:
-            if player.protocol_mode == "play":
+            if player.protocol_mode == "game":
                 player.version.send_status_hologram_texts()
 
     def configuration(self):

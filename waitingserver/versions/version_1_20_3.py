@@ -17,7 +17,6 @@ from waitingserver.versions import Version
 class Version_1_20_3(Version):
     protocol_version = 765
     chunk_format = '1.20.3'
-    tag_format = '1.20.3'
     map_format = '1.17'
 
     hologram_entity_id = 101  # Text display
@@ -148,7 +147,7 @@ class Version_1_20_3(Version):
         }
 
     def send_join_game(self):
-        self.protocol.send_packet("join_game",
+        self.protocol.send_packet("login",
                                   self.protocol.buff_type.pack("i?", 0, False),  # Entity id, hardcore
                                   self.protocol.buff_type.pack_varint(2),  # World count
                                   self.protocol.buff_type.pack_string("rtgame:waiting"),  # World names
@@ -166,11 +165,11 @@ class Version_1_20_3(Version):
     def send_spawn(self, effects=False):
         spawn = self.current_world.spawn
 
-        self.protocol.send_packet("spawn_position",
+        self.protocol.send_packet("set_default_spawn_position",
                                   self.protocol.buff_type.pack("iii", int(spawn.get('x')), int(spawn.get('y')),
                                                                int(spawn.get('z'))))
 
-        self.protocol.send_packet("player_position_and_look",
+        self.protocol.send_packet("player_position",
                                   self.protocol.buff_type.pack("dddff?",
                                                                spawn.get('x') + 0.5, spawn.get('y'), spawn.get('z') + 0.5,
                                                                spawn.get('yaw'), spawn.get('pitch'), 0b00000),
@@ -179,12 +178,12 @@ class Version_1_20_3(Version):
         if effects is True:
             self.send_spawn_effect()
 
-        self.protocol.send_packet("change_game_state", self.protocol.buff_type.pack("Bf", 13, 0.0))
+        self.protocol.send_packet("game_event", self.protocol.buff_type.pack("Bf", 13, 0.0))
 
     def send_spawn_effect(self):
         spawn = self.current_world.spawn
 
-        self.protocol.send_packet("effect",
+        self.protocol.send_packet("level_event",
                                   self.protocol.buff_type.pack("i", 2003),
                                   self.protocol.buff_type.pack_position(
                                       int(spawn.get('x')),
@@ -226,14 +225,14 @@ class Version_1_20_3(Version):
 
         for x in range(-8, 8):
             for y in range(-8, 8):
-                self.protocol.send_packet("chunk_data", self.protocol.buff_type.pack("ii", x, y), *data)
+                self.protocol.send_packet("level_chunk_with_light", self.protocol.buff_type.pack("ii", x, y), *data)
 
     def send_keep_alive(self):
         self.protocol.send_packet("keep_alive", self.protocol.buff_type.pack("Q", 0))
 
     def send_time(self):
         # Time of day
-        self.protocol.send_packet('time_update',
+        self.protocol.send_packet('set_time',
                                   self.protocol.buff_type.pack("Qq", 0,
                                                                self.current_world.time
                                                                if self.current_world.cycle is True
@@ -241,9 +240,9 @@ class Version_1_20_3(Version):
 
     def send_weather(self, rain=False):
         if rain:
-            self.protocol.send_packet('change_game_state', self.protocol.buff_type.pack("Bf", 2, 0))
+            self.protocol.send_packet('game_event', self.protocol.buff_type.pack("Bf", 2, 0))
         else:
-            self.protocol.send_packet('change_game_state', self.protocol.buff_type.pack("Bf", 1, 0))
+            self.protocol.send_packet('game_event', self.protocol.buff_type.pack("Bf", 1, 0))
 
     def send_music(self, stop=False):
         self.protocol.send_packet("stop_sound", self.protocol.buff_type.pack("B", 2),
@@ -260,7 +259,7 @@ class Version_1_20_3(Version):
     def send_global_sound(self, sound: str, channel: int):
         spawn = self.current_world.spawn
 
-        self.protocol.send_packet("sound_effect",
+        self.protocol.send_packet("sound",
                                   self.protocol.buff_type.pack_varint(0),
                                   self.protocol.buff_type.pack_string(sound),
                                   self.protocol.buff_type.pack("?", False),
@@ -272,19 +271,19 @@ class Version_1_20_3(Version):
                                                                0))
 
     def send_commands(self):
-        self.protocol.send_packet('declare_commands', self.protocol.buff_type.pack_commands(self.commands))
+        self.protocol.send_packet('commands', self.protocol.buff_type.pack_commands(self.commands))
 
     def send_chat_message(self, message: Message):
-        self.protocol.send_packet('system_message',
+        self.protocol.send_packet('system_chat',
                                   self.protocol.buff_type.pack_chat(message),
                                   self.protocol.buff_type.pack("?", False))  # Not an overlay (action bar) message
 
     def send_tablist(self):
-        self.protocol.send_packet("player_list_header_footer",
+        self.protocol.send_packet("tab_list",
                                   self.protocol.buff_type.pack_chat("\n\ue300\n"),
                                   self.protocol.buff_type.pack_chat(""))
 
-        self.protocol.send_packet("player_list_item",
+        self.protocol.send_packet("player_info_update",
                                   self.protocol.buff_type.pack('B', 63),
                                   self.protocol.buff_type.pack_varint(1),
                                   self.protocol.buff_type.pack_uuid(self.protocol.uuid),
@@ -307,20 +306,20 @@ class Version_1_20_3(Version):
             data.append(self.protocol.buff_type.pack('?', False))
 
         data.append(self.protocol.buff_type.pack('?', False))
-        self.protocol.send_packet('window_items', *data)
+        self.protocol.send_packet('container_set_content', *data)
 
     def send_portal(self, server):
         connect = "Connect".encode('utf-8')
         server = server.encode('utf-8')
         message_format = 'H' + str(len(connect)) + 'sH' + str(len(server)) + 's'
 
-        self.protocol.send_packet("plugin_message",
+        self.protocol.send_packet("custom_payload",
                                   self.protocol.buff_type.pack_string('bungeecord:main'),
                                   self.protocol.buff_type.pack(message_format, len(connect), connect, len(server),
                                                                server))
 
     def send_map_frame(self, pos: List[float], direction: Direction, map_id: int):
-        self.protocol.send_packet("spawn_object",
+        self.protocol.send_packet("add_entity",
                                   self.protocol.buff_type.pack_varint(self.last_entity_id),
                                   self.protocol.buff_type.pack_uuid(UUID.random()),
                                   self.protocol.buff_type.pack_varint(self.map_entity_id),
@@ -348,7 +347,7 @@ class Version_1_20_3(Version):
             self.map_packets[self.map_format] = dict()
 
         if self.map_packets[self.map_format].get(part.map_id) is not None:
-            self.protocol.send_packet("map", *self.map_packets[self.map_format][part.map_id])
+            self.protocol.send_packet("map_item_data", *self.map_packets[self.map_format][part.map_id])
             return
 
         data = [
@@ -361,11 +360,11 @@ class Version_1_20_3(Version):
             data.append(self.protocol.buff_type.pack("B", part.data[i]))
 
         self.map_packets[self.map_format][part.map_id] = data
-        self.protocol.send_packet("map", *data)
+        self.protocol.send_packet("map_item_data", *data)
 
     def send_status_hologram(self, pos: List[float]):
         entity_id = self.last_entity_id
-        self.protocol.send_packet("spawn_object",
+        self.protocol.send_packet("add_entity",
                                   self.protocol.buff_type.pack_varint(self.last_entity_id),
                                   self.protocol.buff_type.pack_uuid(UUID.random()),
                                   self.protocol.buff_type.pack_varint(self.hologram_entity_id),
@@ -380,7 +379,7 @@ class Version_1_20_3(Version):
         return entity_id
 
     def send_entity_metadata(self, entity_id: int, metadata: Dict[Tuple[int, int], Union[str, int, bool]]):
-        self.protocol.send_packet("entity_metadata",
+        self.protocol.send_packet("set_entity_data",
                                   self.protocol.buff_type.pack_varint(entity_id),
                                   self.protocol.buff_type.pack_entity_metadata(metadata))
 
@@ -399,7 +398,7 @@ class Version_1_20_3(Version):
         encoded_color = encoded_color | (r << 16)
         encoded_color = encoded_color | (255 << 24)
 
-        self.protocol.send_packet("plugin_message",
+        self.protocol.send_packet("custom_payload",
                                   self.protocol.buff_type.pack_string("minecraft:debug/game_test_add_marker"),
                                   self.protocol.buff_type.pack_position(pos[0], pos[1], pos[2]),
                                   self.protocol.buff_type.pack("I", encoded_color),
@@ -407,5 +406,5 @@ class Version_1_20_3(Version):
                                   self.protocol.buff_type.pack("i", 2147483647))
 
     def clear_debug_markers(self):
-        self.protocol.send_packet("plugin_message",
+        self.protocol.send_packet("custom_payload",
                                   self.protocol.buff_type.pack_string("minecraft:debug/game_test_clear"))

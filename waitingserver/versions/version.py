@@ -1,12 +1,10 @@
 import abc
 import math
-import os
 import time
 from copy import deepcopy
 from pathlib import Path
 
 from quarry.types import chat
-from quarry.types.buffer import Buffer
 from typing import List, Dict, Tuple, Union, Optional
 
 from quarry.types.chat import Message
@@ -24,7 +22,6 @@ parent_folder = Path(__file__).parent.parent
 class Version(object, metaclass=abc.ABCMeta):
     protocol_version = None
     chunk_format = None # Subfolder to use when sending packets for a world
-    tag_format = None # Packet to use when sending tags for a world
     map_format = None # Subfolder to use when sending maps for a world
 
     hologram_entity_id = None # Entity ID to use when creating holograms
@@ -32,7 +29,6 @@ class Version(object, metaclass=abc.ABCMeta):
     map_entity_id = None # Entity ID to use when creating maps
     map_item_id = None # Item ID to use for the maps themselves
 
-    tag_packet = None # Tag packet cache
     map_packets = dict() # Map packet cache
 
     def __init__(self, protocol: Protocol, bedrock: False):
@@ -63,7 +59,6 @@ class Version(object, metaclass=abc.ABCMeta):
 
         self.send_join_game()
         self.send_commands()
-        self.send_tags()
         self.send_world()
 
         if self.is_bedrock:  # Prevent geyser persisting previous server inventory
@@ -72,7 +67,7 @@ class Version(object, metaclass=abc.ABCMeta):
         self.protocol.ticker.add_delay(10, self.send_tablist)
         self.protocol.ticker.add_delay(20, self.send_music)
 
-    def packet_player_position(self, buff):
+    def packet_move_player_pos(self, buff):
         x = buff.unpack('d')
         y = buff.unpack('d')
         z = buff.unpack('d')
@@ -82,7 +77,7 @@ class Version(object, metaclass=abc.ABCMeta):
         self.check_portals(x, y, z)
         self.check_bounds(x, y, z)
 
-    def packet_player_position_and_look(self, buff):
+    def packet_move_player_pos_rot(self, buff):
         x = buff.unpack('d')
         y = buff.unpack('d')
         z = buff.unpack('d')
@@ -95,7 +90,7 @@ class Version(object, metaclass=abc.ABCMeta):
         self.check_bounds(x, y, z)
 
     # Handle /spawn and /reset commands
-    def packet_chat_message(self, buff):
+    def packet_chat(self, buff):
         message = buff.unpack_string()
         buff.read()
 
@@ -298,20 +293,6 @@ class Version(object, metaclass=abc.ABCMeta):
             self.current_world = worlds[self.chunk_format][prev_index]
 
         self.reset_world()
-
-    def send_tags(self):
-        tag_packet = self.__class__.get_tag_packet()
-
-        if tag_packet is not None:
-            self.protocol.send_packet("tags", tag_packet)
-
-    @classmethod
-    def get_tag_packet(cls):
-        if cls.tag_packet is None:
-            cls.tag_packet = Buffer(open(os.path.join(parent_folder, 'data', 'tags', cls.tag_format + '.bin'),
-                                         'rb').read()).read() if cls.tag_format is not None else None
-
-        return cls.tag_packet
 
     def get_data_pack(self) -> Optional[DataPack]:
         return None
