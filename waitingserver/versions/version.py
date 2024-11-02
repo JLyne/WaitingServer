@@ -151,7 +151,7 @@ class Version(object, metaclass=abc.ABCMeta):
             self.send_reset_world()
 
             # Fixes client getting stuck when crossing 0
-            self.protocol.send_packet('initialize_world_border',
+            self.protocol.send_packet('initialize_border',
                                   self.protocol.buff_type.pack('dddd', 500, 500, 500, 500),
                                   self.protocol.buff_type.pack_varint(0),
                                   self.protocol.buff_type.pack_varint(29999984),
