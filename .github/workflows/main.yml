@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Package Application
       uses: sayyid5416/pyinstaller@v1
       with:
-        python_ver: '3.8'
+        python_ver: '3.12'
         spec: 'waitingserver/server.spec'
         requirements: 'waitingserver/requirements.txt'
         
@@ -30,7 +30,7 @@ jobs:
     - name: Tar packets
       run: tar -cvf packets.tar packets
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         if-no-files-found: error
         name: waitingserver-linux
@@ -45,13 +45,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Package Application
       uses: sayyid5416/pyinstaller@v1
       with:
         path: waitingserver
-        python_ver: '3.8'
+        python_ver: '3.12'
         spec: 'waitingserver/server.spec'
         requirements: 'waitingserver/requirements.txt'
         
@@ -64,7 +64,7 @@ jobs:
     - name: Tar packets
       run: tar -cvf packets.tar packets
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         if-no-files-found: error
         name: waitingserver-windows
