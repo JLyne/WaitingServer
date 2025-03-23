@@ -17,7 +17,7 @@ jobs:
     - name: Package Application
       uses: sayyid5416/pyinstaller@v1
       with:
-        python_ver: '3.12'
+        python_ver: '3.13'
         spec: 'waitingserver/server.spec'
         requirements: 'waitingserver/requirements.txt'
         
@@ -50,8 +50,7 @@ jobs:
     - name: Package Application
       uses: sayyid5416/pyinstaller@v1
       with:
-        path: waitingserver
-        python_ver: '3.12'
+        python_ver: '3.13'
         spec: 'waitingserver/server.spec'
         requirements: 'waitingserver/requirements.txt'
         
