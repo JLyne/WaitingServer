@@ -60,7 +60,7 @@ class Version_1_21_2(Version_1_21):
         # Time of day
         self.protocol.send_packet('set_time',
                                   self.protocol.buff_type.pack("Qq?", 0, self.current_world.time,
-                                                               not self.current_world.cycle)) # Boolean for fixed time instead of negative time value
+                                                               self.current_world.cycle)) # Boolean for fixed time instead of negative time value
 
     def send_respawn(self):
         dimension_registry = self.protocol.data_packs.get_registry(NamespacedKey.minecraft('dimension_type'))
