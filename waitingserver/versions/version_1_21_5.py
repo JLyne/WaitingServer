@@ -3,7 +3,7 @@ from waitingserver.versions import Version_1_21_4
 
 
 class Version_1_21_5(Version_1_21_4):
-    protocol_version = 1073742066
+    protocol_version = 770
     chunk_format = '1.21.5'
 
     hologram_entity_id = 125  # Text display

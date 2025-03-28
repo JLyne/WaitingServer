@@ -9,7 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/venv-linux/include" />
       <excludeFolder url="file://$MODULE_DIR$/venv-windows" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.13 (WaitingServer)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">
