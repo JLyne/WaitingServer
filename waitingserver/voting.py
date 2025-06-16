@@ -39,6 +39,10 @@ def entry_navigation_component(uuid: UUID, secret):
                         "action": "run_command",
                         "value": "/prev"
                     },
+                    "click_event": {
+                        "action": "run_command",
+                        "command": "/prev"
+                    },
                 },
                 {
                     "text": " ",
@@ -49,6 +53,10 @@ def entry_navigation_component(uuid: UUID, secret):
                     "clickEvent": {
                         "action": "run_command",
                         "value": "/next"
+                    },
+                    "click_event": {
+                        "action": "run_command",
+                        "command": "/next"
                     }
                 },
                 {
@@ -61,6 +69,10 @@ def entry_navigation_component(uuid: UUID, secret):
                     "clickEvent": {
                         "action": "open_url",
                         "value": url
+                    },
+                    "click_event": {
+                        "action": "open_url",
+                        "url": url
                     }
                 },
                 {
