@@ -368,10 +368,9 @@ class Version_1_20_3(Version):
                                   self.protocol.buff_type.pack_varint(self.last_entity_id),
                                   self.protocol.buff_type.pack_uuid(UUID.random()),
                                   self.protocol.buff_type.pack_varint(self.hologram_entity_id),
-                                  self.protocol.buff_type.pack("dddbbbbhhh",
-                                                               pos[0], pos[1], pos[2],
-                                                               0, 0, 0, 0,
-                                                               0, 0, 0))
+                                  self.protocol.buff_type.pack("dddbbb", pos[0], pos[1], pos[2], 0, 0, 0),
+                                  self.protocol.buff_type.pack_varint(0),
+                                  self.protocol.buff_type.pack("hhh", 0, 0, 0))
 
         self.send_entity_metadata(entity_id, self.get_status_hologram_metadata())
 
