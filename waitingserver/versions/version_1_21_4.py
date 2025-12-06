@@ -10,5 +10,5 @@ class Version_1_21_4(Version_1_21_2):
     map_entity_id = 57  # Glow item frame
     map_item_id = 1031  # Filled map
 
-    def __init__(self, protocol: Protocol, bedrock: False):
-        super(Version_1_21_2, self).__init__(protocol, bedrock)
+    def __init__(self, protocol: Protocol, bedrock: bool = False):
+        super().__init__(protocol, bedrock)

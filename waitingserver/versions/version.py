@@ -31,7 +31,7 @@ class Version(object, metaclass=abc.ABCMeta):
 
     map_packets = dict() # Map packet cache
 
-    def __init__(self, protocol: Protocol, bedrock: False):
+    def __init__(self, protocol: Protocol, bedrock: bool = False):
         self.protocol = protocol
 
         self.current_world = None
@@ -43,6 +43,7 @@ class Version(object, metaclass=abc.ABCMeta):
 
         self.last_entity_id = 1000
         self.status_holograms = dict()
+        self.commands = {}
 
     def player_joined(self):
         self.protocol.ticker.add_loop(100, self.send_keep_alive)  # Keep alive packets

@@ -16,11 +16,17 @@ class Version_1_21_9(Version_1_21_7):
     map_item_id = 1104  # Filled map
 
 
-    def __init__(self, protocol: Protocol, bedrock: False):
-        super(Version_1_21_7, self).__init__(protocol, bedrock)
+    def __init__(self, protocol: Protocol, bedrock: bool = False):
+        super().__init__(protocol, bedrock)
 
     def send_spawn(self, effects=False):
         spawn = self.current_world.spawn
+
+        self.protocol.send_packet("set_chunk_cache_center",
+                                  self.protocol.buff_type.pack_varint(0) + self.protocol.buff_type.pack_varint(0))
+
+        self.protocol.send_packet("set_chunk_cache_radius",
+                                  self.protocol.buff_type.pack_varint(10))
 
         self.protocol.send_packet("set_default_spawn_position",
                              self.protocol.buff_type.pack_global_position("minecraft:overworld",

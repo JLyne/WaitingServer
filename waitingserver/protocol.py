@@ -22,7 +22,7 @@ class Protocol(ServerProtocol):
     debug_mode = False
 
     def __init__(self, factory, remote_addr):
-        super(Protocol, self).__init__(factory, remote_addr)
+        super().__init__(factory, remote_addr)
 
         self.is_bedrock = False
         self.version = None

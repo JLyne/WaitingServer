@@ -26,8 +26,8 @@ class Version_1_21(Version):
 
     data_pack: DataPack = None  # Data pack to apply
 
-    def __init__(self, protocol: Protocol, bedrock: False):
-        super(Version_1_21, self).__init__(protocol, bedrock)
+    def __init__(self, protocol: Protocol, bedrock: bool = False):
+        super().__init__(protocol, bedrock)
 
         self.commands = {
             "name": None,

@@ -12,8 +12,8 @@ class Version_1_21_2(Version_1_21):
     map_entity_id = 58  # Glow item frame
     map_item_id = 1022  # Filled map
 
-    def __init__(self, protocol: Protocol, bedrock: False):
-        super(Version_1_21, self).__init__(protocol, bedrock)
+    def __init__(self, protocol: Protocol, bedrock: bool = False):
+        super().__init__(protocol, bedrock)
 
     def send_join_game(self):
         dimension_registry = self.protocol.data_packs.get_registry(NamespacedKey.minecraft('dimension_type'))

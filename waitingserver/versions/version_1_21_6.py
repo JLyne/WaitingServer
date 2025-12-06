@@ -12,8 +12,8 @@ class Version_1_21_6(Version_1_21_5):
     map_entity_id = 58  # Glow item frame
     map_item_id = 1059  # Filled map
 
-    def __init__(self, protocol: Protocol, bedrock: False):
-        super(Version_1_21_5, self).__init__(protocol, bedrock)
+    def __init__(self, protocol: Protocol, bedrock: bool = False):
+        super().__init__(protocol, bedrock)
 
     def get_map_frame_metadata(self, map_id: int) -> Dict[Tuple[int, int], Union[str, int, bool]]:
         return {
