@@ -62,9 +62,6 @@ class Version(object, metaclass=abc.ABCMeta):
         self.send_commands()
         self.send_world()
 
-        if self.is_bedrock:  # Prevent geyser persisting previous server inventory
-            self.send_inventory()
-
         self.protocol.ticker.add_delay(10, self.send_tablist)
         self.protocol.ticker.add_delay(20, self.send_music)
 
@@ -147,18 +144,6 @@ class Version(object, metaclass=abc.ABCMeta):
             self.send_portal(server)
 
     def send_world(self):
-        # Clear geyser chunk cache from previous server
-        if self.is_bedrock:
-            self.send_reset_world()
-
-            # Fixes client getting stuck when crossing 0
-            self.protocol.send_packet('initialize_border',
-                                  self.protocol.buff_type.pack('dddd', 500, 500, 500, 500),
-                                  self.protocol.buff_type.pack_varint(0),
-                                  self.protocol.buff_type.pack_varint(29999984),
-                                  self.protocol.buff_type.pack_varint(29999984),
-                                  self.protocol.buff_type.pack_varint(1))
-
         # Chunk packets
         for packet in self.current_world.packets:
             self.protocol.send_packet(packet.type, packet.data)
@@ -174,10 +159,7 @@ class Version(object, metaclass=abc.ABCMeta):
         # Start/stop rain as necessary
         self.send_weather(self.current_world.weather == 'rain')
 
-        if self.is_bedrock:  # Current versions of geyser seem to ignore the time sometimes. Send repeatedly for now.
-            self.protocol.ticker.add_loop(100, self.send_time)
-        else:
-            self.send_time()
+        self.send_time()
 
         # Credits and entry navigation
         if self.protocol.voting_mode:
