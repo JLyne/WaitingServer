@@ -62,6 +62,9 @@ class Version(object, metaclass=abc.ABCMeta):
         self.send_commands()
         self.send_world()
 
+        if self.is_bedrock:  # Prevent geyser persisting previous server inventory
+            self.send_inventory()
+
         self.protocol.ticker.add_delay(10, self.send_tablist)
         self.protocol.ticker.add_delay(20, self.send_music)
 
