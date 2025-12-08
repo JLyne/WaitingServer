@@ -15,6 +15,7 @@ worlds:
   folder: waiting
   spawn: 0,32,0,180,0
   environment:
+    dimension: void
     time: 18000
   bounds:
     pos1: 111,255,111
