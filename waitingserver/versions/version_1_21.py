@@ -113,9 +113,9 @@ class Version_1_21(Version):
 
         contents = {
             NamespacedKey.minecraft('dimension_type'): {
-                NamespacedKey.minecraft('overworld'): self.get_dimension_settings("overworld"),
-                NamespacedKey.minecraft('nether'): self.get_dimension_settings("nether"),
-                NamespacedKey.minecraft('the_end'): self.get_dimension_settings("the_end"),
+                NamespacedKey.minecraft('overworld'): self.get_dimension_settings('overworld'),
+                NamespacedKey.minecraft('the_nether'): self.get_dimension_settings('the_nether'),
+                NamespacedKey.minecraft('the_end'): self.get_dimension_settings('the_end'),
             },
             NamespacedKey.minecraft('worldgen/biome'): {
                 NamespacedKey.minecraft('the_void'): void
