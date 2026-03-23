@@ -16,7 +16,7 @@ worlds:
   spawn: 0,32,0,180,0
   environment:
     dimension: void
-    time: 18000
+    time: 6000
   bounds:
     pos1: 111,255,111
     pos2: -95,0,-95

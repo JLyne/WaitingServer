@@ -59,8 +59,9 @@ class Version_1_21_11(Version_1_21_9):
                         .get(NamespacedKey.minecraft('overworld')))
 
             settings['has_ceiling'] = 1
-            settings['has_skylight'] = 0
             settings['attributes'] = {
+                'minecraft:visual/sky_color': 0,
+                'minecraft:visual/fog_color': 0,
                 'minecraft:visual/sun_angle': 180,
                 'minecraft:visual/moon_angle': 180,
             }
