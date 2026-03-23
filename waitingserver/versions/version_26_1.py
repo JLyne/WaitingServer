@@ -5,7 +5,7 @@ from waitingserver.versions import Version_1_21_11
 
 
 class Version_26_1(Version_1_21_11):
-    protocol_version = 1073742127
+    protocol_version = 775
     chunk_format = '26.1'
 
     def __init__(self, protocol: Protocol, bedrock: bool = False):
