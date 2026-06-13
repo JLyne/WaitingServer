@@ -5,8 +5,8 @@ from waitingserver.versions import Version_26_1
 
 
 class Version_26_2(Version_26_1):
-    protocol_version = 1073742145
-    chunk_format = '26.1'
+    protocol_version = 1073742146
+    chunk_format = '26.2'
 
     hologram_entity_id = 132  # Text display
     map_item_id = 1133  # Filled map
