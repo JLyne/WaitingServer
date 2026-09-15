@@ -45,6 +45,7 @@ server_factory.protocol = Protocol
 server_factory.max_players = args.max
 server_factory.motd = "Waiting Server"
 server_factory.online_mode = False
+server_factory.encryption = not args.bungeecord and not args.velocity
 server_factory.compression_threshold = 1500
 server_factory.server_statuses = dict()
 server_factory.bungee_forwarding = args.bungeecord
